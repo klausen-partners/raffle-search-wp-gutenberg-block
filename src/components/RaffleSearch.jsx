@@ -21,9 +21,22 @@ import {
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
+// Sync a query string param with the URL without adding a history entry.
+function setUrlParam(value) {
+	const url = new URL(window.location.href);
+	if (value) {
+		url.searchParams.set('q', value);
+	} else {
+		url.searchParams.delete('q');
+	}
+	history.replaceState(null, '', url.toString());
+}
+
 export default function RaffleSearch() {
-	const [query, setQuery] = useState('');
-	const [inputValue, setInputValue] = useState('');
+	const initialQ = new URLSearchParams(window.location.search).get('q') ?? '';
+
+	const [query, setQuery] = useState(initialQ);
+	const [inputValue, setInputValue] = useState(initialQ);
 	const [isUserTyping, setIsUserTyping] = useState(false);
 	const [hasSearched, setHasSearched] = useState(false);
 
@@ -75,6 +88,13 @@ export default function RaffleSearch() {
 		mutationFn: sendFeedback,
 	});
 
+	// If a query was in the URL on load, run the search immediately.
+	useEffect(() => {
+		if (initialQ.trim().length >= 3) {
+			handleSearch(initialQ);
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 	// Trigger suggestions when the debounced input reaches 3+ chars.
 	useEffect(() => {
 		if (isUserTyping && debouncedInput.length >= 3) {
@@ -88,6 +108,14 @@ export default function RaffleSearch() {
 	useEffect(() => {
 		if (isUserTyping && debouncedSearch.trim().length >= 3) {
 			handleSearch(debouncedSearch);
+
+			// Add GTM data layer event for search performed via auto-search.
+			if (window.dataLayer) {
+				window.dataLayer.push({
+					event: 'raffle_auto_search',
+					search_query: debouncedSearch,
+				});
+			}
 		}
 	}, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -98,6 +126,7 @@ export default function RaffleSearch() {
 			setQuery(q);
 			setInputValue(q);
 			setIsUserTyping(false);
+			setUrlParam(q);
 			clearSuggestions();
 			setHasSearched(true);
 			getSummary(q);
@@ -107,8 +136,10 @@ export default function RaffleSearch() {
 	);
 
 	const handleInputChange = (e) => {
-		setInputValue(e.target.value);
+		const val = e.target.value;
+		setInputValue(val);
 		setIsUserTyping(true);
+		setUrlParam(val);
 	};
 
 	const handleKeyDown = (e) => {
