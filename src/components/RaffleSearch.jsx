@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	fetchTopQuestions,
@@ -11,7 +12,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import Spinner from './Spinner';
 import {
 	IconSearch,
-	IconArrow,
+	IconSubmit,
 	IconGlobe,
 	IconPdf,
 	IconSparkle,
@@ -130,7 +131,8 @@ export default function RaffleSearch() {
 
 	// What to show in the left panel.
 	const showSuggestions = isUserTyping && suggestions.length > 0;
-	const showTopQuestions = !hasSearched && !showSuggestions;
+	const showTopQuestions =
+		!hasSearched && !showSuggestions && topQuestions.length > 0;
 	const showLeftPanel = showSuggestions || showTopQuestions;
 
 	return (
@@ -148,17 +150,17 @@ export default function RaffleSearch() {
 					value={inputValue}
 					onChange={handleInputChange}
 					onKeyDown={handleKeyDown}
-					placeholder='Search…'
-					aria-label='Search'
+					placeholder={__('Search…', 'raffle-search')}
+					aria-label={__('Search', 'raffle-search')}
 					autoComplete='off'
 				/>
 				<button
 					className='raffle-search-btn'
 					onClick={() => handleSearch(inputValue)}
 					disabled={inputValue.trim().length === 0}
-					aria-label='Submit search'
+					aria-label={__('Submit search', 'raffle-search')}
 				>
-					<IconArrow />
+					<IconSubmit />
 				</button>
 			</div>
 
@@ -168,7 +170,9 @@ export default function RaffleSearch() {
 			{showLeftPanel && (
 				<div className='raffle-panel'>
 					<h3 className='raffle-panel-title'>
-						{showSuggestions ? 'Suggestions' : 'Popular Questions'}
+						{showSuggestions
+							? __('Suggestions', 'raffle-search')
+							: __('Popular Questions', 'raffle-search')}
 					</h3>
 					{isLoadingTopQ && !showSuggestions ? (
 						<Spinner />
@@ -212,7 +216,7 @@ export default function RaffleSearch() {
 					{/* Summary */}
 					<div className='raffle-panel raffle-panel--summary'>
 						<h3 className='raffle-panel-title raffle-panel-title--ai'>
-							<IconSparkle /> AI Summary
+							<IconSparkle /> {__('AI Summary', 'raffle-search')}
 							{isLoadingSummary && <Spinner />}
 						</h3>
 						{isLoadingSummary ? null : summary?.status ===
@@ -225,32 +229,36 @@ export default function RaffleSearch() {
 										__html: summary.summary,
 									}}
 								/>
-								{summary.references?.length > 0 && (
-									<>
-										<h4 className='raffle-references-title'>
-											References
-										</h4>
-										<ol className='raffle-references-list'>
-											{summary.references.map(
-												(ref, i) => (
-													<li key={i}>
-														<a
-															href={ref.url}
-															target='_blank'
-															rel='noopener noreferrer'
-														>
-															{ref.title}
-														</a>
-													</li>
-												),
-											)}
-										</ol>
-									</>
-								)}
+								{window.raffleSettings?.showReferences &&
+									summary.references?.length > 0 && (
+										<>
+											<h4 className='raffle-references-title'>
+												References
+											</h4>
+											<ol className='raffle-references-list'>
+												{summary.references.map(
+													(ref, i) => (
+														<li key={i}>
+															<a
+																href={ref.url}
+																target='_blank'
+																rel='noopener noreferrer'
+															>
+																{ref.title}
+															</a>
+														</li>
+													),
+												)}
+											</ol>
+										</>
+									)}
 							</>
 						) : (
 							<p className='raffle-empty'>
-								No summary available for this query.
+								{__(
+									'No summary available for this query.',
+									'raffle-search',
+								)}
 							</p>
 						)}
 					</div>
@@ -263,7 +271,10 @@ export default function RaffleSearch() {
 					)}
 					{!isLoadingResults && results.length === 0 && (
 						<p className='raffle-empty'>
-							No results found for this query.
+							{__(
+								'No results found for this query.',
+								'raffle-search',
+							)}
 						</p>
 					)}
 					{!isLoadingResults && results.length > 0 && (

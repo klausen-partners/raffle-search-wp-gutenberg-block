@@ -45,6 +45,16 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_show_references',
+		array(
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'default'           => true,
+		)
+	);
+
 	add_settings_section(
 		'raffle_search_main_section',
 		__( 'API Configuration', 'raffle-search' ),
@@ -64,6 +74,14 @@ function raffle_search_register_settings() {
 		'raffle_search_uid',
 		__( 'Search UID', 'raffle-search' ),
 		'raffle_search_field_search_uid',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
+
+	add_settings_field(
+		'raffle_search_show_references',
+		__( 'Show References', 'raffle-search' ),
+		'raffle_search_field_show_references',
 		'raffle-search-settings',
 		'raffle_search_main_section'
 	);
@@ -92,6 +110,17 @@ function raffle_search_field_search_uid() {
 <p class="description">
     <?php esc_html_e( 'The UID of your Raffle Search UI (Tool UID). Found in the Install modal of your tool in the Raffle Web App.', 'raffle-search' ); ?>
 </p>
+<?php
+}
+
+function raffle_search_field_show_references() {
+	$value = get_option( 'raffle_search_show_references', true );
+	?>
+<label for="raffle_search_show_references">
+    <input type="checkbox" id="raffle_search_show_references" name="raffle_search_show_references"
+        value="1" <?php checked( 1, $value ); ?> />
+    <?php esc_html_e( 'Display the References list below the AI summary.', 'raffle-search' ); ?>
+</label>
 <?php
 }
 
