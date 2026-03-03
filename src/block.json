@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "raffle-search/search",
+	"version": "1.0.0",
+	"title": "Raffle Search",
+	"category": "widgets",
+	"icon": "search",
+	"description": "A search block powered by Raffle AI with top questions, autocomplete, AI summary, and search results.",
+	"keywords": [ "raffle", "search", "ai" ],
+	"textdomain": "raffle-search",
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style-view.css",
+	"editorStyle": "file:./index.css",
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ]
+	},
+	"attributes": {}
+}

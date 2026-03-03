@@ -1,0 +1,217 @@
+/* ============================================================
+   Raffle Search Block — Frontend Styles
+   All selectors are scoped under .raffle-search-block
+   ============================================================ */
+
+.raffle-search-block {
+	box-sizing: border-box;
+	font-family: inherit;
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 1.5rem 0;
+}
+
+.raffle-search-block *,
+.raffle-search-block *::before,
+.raffle-search-block *::after {
+	box-sizing: inherit;
+}
+
+/* ---- Input row ---- */
+
+.raffle-search-input-row {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1.25rem;
+}
+
+.raffle-search-input {
+	flex: 1 1 auto;
+	padding: 0.625rem 0.875rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	outline: none;
+	transition: border-color 0.15s;
+}
+
+.raffle-search-input:focus {
+	border-color: #0073aa;
+	box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+}
+
+.raffle-search-btn {
+	flex: 0 0 auto;
+	padding: 0.625rem 1.25rem;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #fff;
+	background-color: #0073aa;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.raffle-search-btn:hover:not(:disabled) {
+	background-color: #005a87;
+}
+
+.raffle-search-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ---- Panel ---- */
+
+.raffle-panel {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	padding: 1.25rem 1.5rem;
+	margin-bottom: 1.25rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.raffle-panel-title {
+	font-size: 1rem;
+	font-weight: 700;
+	margin: 0 0 0.75rem;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* ---- Lists (suggestions / top questions) ---- */
+
+.raffle-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.raffle-list-item {
+	padding: 0.4rem 0;
+	border-bottom: 1px solid #f0f4f8;
+	font-size: 0.9375rem;
+}
+
+.raffle-list-item:last-child {
+	border-bottom: none;
+}
+
+.raffle-list-item--clickable {
+	cursor: pointer;
+	color: #0073aa;
+	transition: color 0.1s;
+}
+
+.raffle-list-item--clickable:hover {
+	color: #005a87;
+	text-decoration: underline;
+}
+
+/* ---- Summary ---- */
+
+.raffle-summary-content {
+	font-size: 0.9375rem;
+	line-height: 1.65;
+	color: #333;
+}
+
+.raffle-summary-content a {
+	color: #0073aa;
+	text-decoration: underline;
+}
+
+.raffle-references-title {
+	font-size: 0.875rem;
+	font-weight: 700;
+	margin: 1rem 0 0.5rem;
+	padding: 0;
+}
+
+.raffle-references-list {
+	margin: 0;
+	padding: 0 0 0 1.25rem;
+	font-size: 0.875rem;
+}
+
+.raffle-references-list li {
+	margin-bottom: 0.25rem;
+}
+
+.raffle-references-list a {
+	color: #0073aa;
+}
+
+/* ---- Search results ---- */
+
+.raffle-results-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.raffle-result-item {
+	padding: 0.875rem 0;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.raffle-result-item:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.raffle-result-link {
+	display: inline-block;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #0073aa;
+	text-decoration: none;
+	margin-bottom: 0.25rem;
+}
+
+.raffle-result-link:hover {
+	text-decoration: underline;
+}
+
+.raffle-result-snippet {
+	font-size: 0.9rem;
+	color: #555;
+	line-height: 1.55;
+}
+
+/* Raffle line-break placeholder */
+.raffle-result-snippet .raffle.line-break::after {
+	content: ' • ';
+}
+
+/* ---- Empty states ---- */
+
+.raffle-empty {
+	font-size: 0.9rem;
+	color: #777;
+	margin: 0;
+}
+
+/* ---- Loading spinner ---- */
+
+.raffle-spinner {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 2px solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: raffle-spin 0.6s linear infinite;
+	vertical-align: middle;
+}
+
+@keyframes raffle-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

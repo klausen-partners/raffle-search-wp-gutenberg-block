@@ -1,0 +1,24 @@
+{
+	"name": "raffle-search",
+	"version": "1.0.0",
+	"description": "Raffle AI Search Gutenberg Block",
+	"homepage": "https://kogp.dk",
+	"author": "Klausen and Partners",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/klausen-partners/raffle-search-wp-gutenberg-block.git"
+	},
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"format": "wp-scripts format",
+		"lint:js": "wp-scripts lint-js"
+	},
+	"dependencies": {
+		"@tanstack/react-query": "^5.90.21",
+		"@uidotdev/usehooks": "^2.4.1"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^31.5.0"
+	}
+}
