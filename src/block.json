@@ -17,5 +17,10 @@
 		"html": false,
 		"align": [ "wide", "full" ]
 	},
-	"attributes": {}
+	"attributes": {
+		"searchUid": {
+			"type": "string",
+			"default": ""
+		}
+	}
 }

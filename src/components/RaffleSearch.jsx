@@ -32,8 +32,10 @@ function setUrlParam(value) {
 	history.replaceState(null, '', url.toString());
 }
 
-export default function RaffleSearch() {
+export default function RaffleSearch({ searchUid }) {
 	const initialQ = new URLSearchParams(window.location.search).get('q') ?? '';
+	// Resolve the UID: per-block prop takes precedence over global settings.
+	const uid = searchUid || window.raffleSettings?.searchUid || '';
 
 	const [query, setQuery] = useState(initialQ);
 	const [inputValue, setInputValue] = useState(initialQ);
@@ -45,8 +47,8 @@ export default function RaffleSearch() {
 
 	// --- Top Questions (loaded once on mount) ---
 	const { data: topQuestions = [], isLoading: isLoadingTopQ } = useQuery({
-		queryKey: ['raffle-top-questions'],
-		queryFn: fetchTopQuestions,
+		queryKey: ['raffle-top-questions', uid],
+		queryFn: () => fetchTopQuestions(uid),
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 
@@ -57,7 +59,7 @@ export default function RaffleSearch() {
 		reset: clearSuggestions,
 	} = useMutation({
 		mutationKey: ['raffle-suggestions'],
-		mutationFn: (q) => fetchSuggestions(q),
+		mutationFn: (q) => fetchSuggestions(q, uid),
 	});
 
 	// --- Summary ---
@@ -68,7 +70,7 @@ export default function RaffleSearch() {
 		reset: clearSummary,
 	} = useMutation({
 		mutationKey: ['raffle-summary'],
-		mutationFn: fetchSummary,
+		mutationFn: (q) => fetchSummary(q, uid),
 	});
 
 	// --- Search results ---
@@ -79,7 +81,7 @@ export default function RaffleSearch() {
 		reset: clearResults,
 	} = useMutation({
 		mutationKey: ['raffle-search'],
-		mutationFn: fetchSearchResults,
+		mutationFn: (q) => fetchSearchResults(q, uid),
 	});
 
 	// --- Feedback ---

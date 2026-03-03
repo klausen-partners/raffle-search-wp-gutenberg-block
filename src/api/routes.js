@@ -5,26 +5,31 @@
  * @param {Object} params - key/value pairs to append as query string
  * @returns {string}
  */
-export function buildUrl( path, params = {} ) {
+export function buildUrl(path, params = {}) {
 	const base =
-		( window.raffleSettings && window.raffleSettings.baseUrl ) ||
+		(window.raffleSettings && window.raffleSettings.baseUrl) ||
 		'https://api.raffle.ai/v2';
 
-	const url = new URL( base.replace( /\/$/, '' ) + path );
+	const url = new URL(base.replace(/\/$/, '') + path);
 
-	Object.entries( params ).forEach( ( [ key, value ] ) => {
-		if ( value !== undefined && value !== null && value !== '' ) {
-			url.searchParams.append( key, value );
+	Object.entries(params).forEach(([key, value]) => {
+		if (value !== undefined && value !== null && value !== '') {
+			url.searchParams.append(key, value);
 		}
-	} );
+	});
 
 	return url.toString();
 }
 
 /**
- * Return the search UID from the localised settings.
+ * Return the search UID, preferring a per-block override over the global setting.
+ * @param {string} [override]
  * @returns {string}
  */
-export function getUid() {
-	return ( window.raffleSettings && window.raffleSettings.searchUid ) || '';
+export function getUid(override) {
+	return (
+		override ||
+		(window.raffleSettings && window.raffleSettings.searchUid) ||
+		''
+	);
 }

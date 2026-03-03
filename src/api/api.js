@@ -5,7 +5,7 @@ import { buildUrl, getUid } from './routes';
  * The value is random per page view, which groups searches within the same visit.
  */
 const sessionId =
-	Math.random().toString( 36 ).substring( 2 ) + Date.now().toString( 36 );
+	Math.random().toString(36).substring(2) + Date.now().toString(36);
 
 // ---------------------------------------------------------------------------
 // Top Questions
@@ -15,11 +15,10 @@ const sessionId =
  * Fetch the list of top/popular questions for this Search UI.
  * @returns {Promise<Array<{ question: string }>>}
  */
-export async function fetchTopQuestions() {
-	const url = buildUrl( '/top_questions', { uid: getUid() } );
-	const res = await fetch( url );
-	if ( ! res.ok )
-		throw new Error( `Top questions request failed: ${ res.status }` );
+export async function fetchTopQuestions(uid) {
+	const url = buildUrl('/top_questions', { uid: getUid(uid) });
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`Top questions request failed: ${res.status}`);
 	const data = await res.json();
 	return data.questions ?? [];
 }
@@ -34,15 +33,14 @@ export async function fetchTopQuestions() {
  * @param {number} [limit=5]
  * @returns {Promise<Array<{ suggestion: string }>>}
  */
-export async function fetchSuggestions( query, limit = 5 ) {
-	const url = buildUrl( '/autocomplete', {
-		uid: getUid(),
+export async function fetchSuggestions(query, uid, limit = 5) {
+	const url = buildUrl('/autocomplete', {
+		uid: getUid(uid),
 		query,
-		limit: String( limit ),
-	} );
-	const res = await fetch( url );
-	if ( ! res.ok )
-		throw new Error( `Autocomplete request failed: ${ res.status }` );
+		limit: String(limit),
+	});
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`Autocomplete request failed: ${res.status}`);
 	const data = await res.json();
 	return data.suggestions ?? [];
 }
@@ -57,15 +55,14 @@ export async function fetchSuggestions( query, limit = 5 ) {
  * @param {string} query
  * @returns {Promise<{ status: string, summary: string, references: Array }>}
  */
-export async function fetchSummary( query ) {
-	const url = buildUrl( '/summary', {
-		uid: getUid(),
+export async function fetchSummary(query, uid) {
+	const url = buildUrl('/summary', {
+		uid: getUid(uid),
 		query,
 		reference_format: 'html',
-	} );
-	const res = await fetch( url );
-	if ( ! res.ok )
-		throw new Error( `Summary request failed: ${ res.status }` );
+	});
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`Summary request failed: ${res.status}`);
 	return res.json();
 }
 
@@ -79,18 +76,18 @@ export async function fetchSummary( query ) {
  * @param {string} query
  * @returns {Promise<Array>}
  */
-export async function fetchSearchResults( query ) {
-	const url = buildUrl( '/search', {
-		uid: getUid(),
+export async function fetchSearchResults(query, uid) {
+	const url = buildUrl('/search', {
+		'uid': getUid(uid),
 		query,
 		'session-id': sessionId,
-		device: 'desktop',
+		'device': 'desktop',
 		// Set preview=true during development to avoid polluting insights.
 		// Remove or set to 'false' in production.
-		preview: 'false',
-	} );
-	const res = await fetch( url );
-	if ( ! res.ok ) throw new Error( `Search request failed: ${ res.status }` );
+		'preview': 'false',
+	});
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`Search request failed: ${res.status}`);
 	const data = await res.json();
 	return data.results ?? [];
 }
@@ -106,11 +103,11 @@ export async function fetchSearchResults( query ) {
  * @param {string} feedbackData - The opaque `feedback_data` string from a search result.
  * @returns {Promise<void>}
  */
-export async function sendFeedback( feedbackData ) {
-	const url = buildUrl( '/feedback' );
-	await fetch( url, {
+export async function sendFeedback(feedbackData) {
+	const url = buildUrl('/feedback');
+	await fetch(url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify( { type: 'click', feedback_data: feedbackData } ),
-	} );
+		body: JSON.stringify({ type: 'click', feedback_data: feedbackData }),
+	});
 }
