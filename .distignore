@@ -1,0 +1,10 @@
+.distignore
+.gitignore
+.editorconfig
+node_modules
+src
+languages/*.po
+languages/*.pot
+package.json
+package-lock.json
+Readme.md

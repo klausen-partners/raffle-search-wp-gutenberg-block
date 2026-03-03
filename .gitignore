@@ -4,6 +4,9 @@ build/
 # Dependencies
 node_modules/
 
+# Archives
+*.zip
+
 # Environment
 .env
 .env.*

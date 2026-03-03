@@ -12,7 +12,8 @@
 		"build": "wp-scripts build",
 		"start": "wp-scripts start",
 		"format": "wp-scripts format",
-		"lint:js": "wp-scripts lint-js"
+		"lint:js": "wp-scripts lint-js",
+		"zip": "wp-scripts plugin-zip"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.90.21",
