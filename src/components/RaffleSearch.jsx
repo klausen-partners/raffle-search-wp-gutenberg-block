@@ -7,25 +7,15 @@ import {
 	fetchSearchResults,
 	sendFeedback,
 } from '../api/api';
-
-// ---------------------------------------------------------------------------
-// Tiny debounce hook
-// ---------------------------------------------------------------------------
-function useDebounce(value, delay) {
-	const [debounced, setDebounced] = useState(value);
-	useEffect(() => {
-		const timer = setTimeout(() => setDebounced(value), delay);
-		return () => clearTimeout(timer);
-	}, [value, delay]);
-	return debounced;
-}
-
-// ---------------------------------------------------------------------------
-// Spinner
-// ---------------------------------------------------------------------------
-function Spinner() {
-	return <span className='raffle-spinner' aria-hidden='true' />;
-}
+import { useDebounce } from '../hooks/useDebounce';
+import Spinner from './Spinner';
+import {
+	IconSearch,
+	IconArrow,
+	IconGlobe,
+	IconPdf,
+	IconSparkle,
+} from './icons';
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -149,6 +139,9 @@ export default function RaffleSearch() {
 			{/* Search input */}
 			{/* ---------------------------------------------------------------- */}
 			<div className='raffle-search-input-row'>
+				<span className='raffle-search-icon-left'>
+					<IconSearch />
+				</span>
 				<input
 					type='search'
 					className='raffle-search-input'
@@ -165,7 +158,7 @@ export default function RaffleSearch() {
 					disabled={inputValue.trim().length === 0}
 					aria-label='Submit search'
 				>
-					Search
+					<IconArrow />
 				</button>
 			</div>
 
@@ -217,9 +210,10 @@ export default function RaffleSearch() {
 			{hasSearched && (
 				<div className='raffle-results-area'>
 					{/* Summary */}
-					<div className='raffle-panel'>
-						<h3 className='raffle-panel-title'>
-							Summary{isLoadingSummary && <Spinner />}
+					<div className='raffle-panel raffle-panel--summary'>
+						<h3 className='raffle-panel-title raffle-panel-title--ai'>
+							<IconSparkle /> AI Summary
+							{isLoadingSummary && <Spinner />}
 						</h3>
 						{isLoadingSummary ? null : summary?.status ===
 						  'success' ? (
@@ -262,14 +256,32 @@ export default function RaffleSearch() {
 					</div>
 
 					{/* Search Results */}
-					<div className='raffle-panel'>
-						<h3 className='raffle-panel-title'>
-							Search Results{isLoadingResults && <Spinner />}
-						</h3>
-						{isLoadingResults ? null : results.length > 0 ? (
-							<ul className='raffle-results-list'>
-								{results.map((result, i) => (
-									<li key={i} className='raffle-result-item'>
+					{isLoadingResults && (
+						<div className='raffle-results-loading'>
+							<Spinner />
+						</div>
+					)}
+					{!isLoadingResults && results.length === 0 && (
+						<p className='raffle-empty'>
+							No results found for this query.
+						</p>
+					)}
+					{!isLoadingResults && results.length > 0 && (
+						<ul className='raffle-results-list'>
+							{results.map((result, i) => {
+								const isPdf = result.url
+									?.toLowerCase()
+									.endsWith('.pdf');
+								return (
+									<li key={i} className='raffle-result-card'>
+										<div className='raffle-result-url'>
+											{isPdf ? (
+												<IconPdf />
+											) : (
+												<IconGlobe />
+											)}
+											<span>{result.url}</span>
+										</div>
 										<a
 											href={result.url}
 											target='_blank'
@@ -291,14 +303,10 @@ export default function RaffleSearch() {
 											}}
 										/>
 									</li>
-								))}
-							</ul>
-						) : (
-							<p className='raffle-empty'>
-								No results found for this query.
-							</p>
-						)}
-					</div>
+								);
+							})}
+						</ul>
+					)}
 				</div>
 			)}
 		</div>
