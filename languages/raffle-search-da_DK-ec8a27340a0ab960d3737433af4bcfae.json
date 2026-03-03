@@ -1,0 +1,24 @@
+{
+	"translation-revision-date": "2026-03-03T00:00:00+00:00",
+	"generator": "manual",
+	"source": "languages/raffle-search-da_DK.po",
+	"domain": "messages",
+	"locale_data": {
+		"messages": {
+			"": {
+				"domain": "messages",
+				"lang": "da_DK",
+				"plural-forms": "nplurals=2; plural=(n != 1);"
+			},
+			"Search\u2026": [ "S\u00f8g\u2026" ],
+			"Search": [ "S\u00f8g" ],
+			"Submit search": [ "Udf\u00f8r s\u00f8gning" ],
+			"Suggestions": [ "Forslag" ],
+			"Popular Questions": [ "Popul\u00e6re sp\u00f8rgsm\u00e5l" ],
+			"AI Summary": [ "AI-resum\u00e9" ],
+			"References": [ "Referencer" ],
+			"No summary available for this query.": [ "Intet resum\u00e9 tilg\u00e6ngeligt for denne s\u00f8gning." ],
+			"No results found for this query.": [ "Ingen resultater fundet for denne s\u00f8gning." ]
+		}
+	}
+}

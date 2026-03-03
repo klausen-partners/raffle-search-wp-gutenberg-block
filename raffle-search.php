@@ -24,6 +24,30 @@ define( 'RAFFLE_SEARCH_URL', plugin_dir_url( __FILE__ ) );
 require_once RAFFLE_SEARCH_DIR . 'includes/admin.php';
 
 /**
+ * Load plugin text domain for translations.
+ * Use plugins_loaded so the textdomain is ready before WPML or Polylang
+ * switches the locale on init.
+ */
+function raffle_search_load_textdomain() {
+	load_plugin_textdomain(
+		'raffle-search',
+		false,
+		dirname( plugin_basename( __FILE__ ) ) . '/languages'
+	);
+}
+add_action( 'plugins_loaded', 'raffle_search_load_textdomain' );
+
+/**
+ * Reload the text domain when WPML switches the active language so that
+ * both PHP strings and the script translation JSON use the correct locale.
+ */
+function raffle_search_reload_textdomain_on_wpml_switch() {
+	unload_textdomain( 'raffle-search' );
+	raffle_search_load_textdomain();
+}
+add_action( 'wpml_language_has_switched', 'raffle_search_reload_textdomain_on_wpml_switch' );
+
+/**
  * Register the Gutenberg block.
  */
 function raffle_search_register_block() {
@@ -41,9 +65,12 @@ function raffle_search_localize_view_script() {
 		$handle,
 		'raffleSettings',
 		array(
-			'baseUrl'   => get_option( 'raffle_search_base_url', 'https://api.raffle.ai/v2' ),
-			'searchUid' => get_option( 'raffle_search_uid', '' ),
+			'baseUrl'        => get_option( 'raffle_search_base_url', 'https://api.raffle.ai/v2' ),
+			'searchUid'      => get_option( 'raffle_search_uid', '' ),
+			'showReferences' => (bool) get_option( 'raffle_search_show_references', true ),
 		)
 	);
+
+	wp_set_script_translations( $handle, 'raffle-search', RAFFLE_SEARCH_DIR . 'languages' );
 }
 add_action( 'enqueue_block_assets', 'raffle_search_localize_view_script' );

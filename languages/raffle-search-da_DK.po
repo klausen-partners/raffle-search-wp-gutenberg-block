@@ -1,0 +1,107 @@
+# Copyright (C) 2026 Klausen and Partners
+# This file is distributed under the GPL-3.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: Raffle Search 1.0.0\n"
+"Report-Msgid-Bugs-To: https://raffle.ai\n"
+"POT-Creation-Date: 2026-03-03T00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2026-03-03T00:00:00+00:00\n"
+"Last-Translator: Klausen and Partners <info@kogp.dk>\n"
+"Language-Team: Danish <da@li.org>\n"
+"Language: da_DK\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: manual\n"
+"X-Domain: raffle-search\n"
+
+#. Plugin Name of the plugin
+msgid "Raffle Search"
+msgstr "Raffle Søgning"
+
+#. Description of the plugin
+msgid "A Gutenberg block that integrates Raffle AI search (top questions, autocomplete, summary, and search results)."
+msgstr "En Gutenberg-blok der integrerer Raffle AI-søgning (populære spørgsmål, autofuldførelse, resumé og søgeresultater)."
+
+#: includes/admin.php
+msgctxt "settings menu title"
+msgid "Raffle Search"
+msgstr "Raffle Søgning"
+
+#: includes/admin.php
+msgid "API Configuration"
+msgstr "API-konfiguration"
+
+#: includes/admin.php
+msgid "Enter your Raffle AI credentials. Find these in the Raffle Web App under your API User Interface settings."
+msgstr "Indtast dine Raffle AI-legitimationsoplysninger. Find dem i Raffle Web App under dine API User Interface-indstillinger."
+
+#: includes/admin.php
+msgid "Base URL"
+msgstr "Basis-URL"
+
+#: includes/admin.php
+msgid "The Raffle API base URL. Defaults to https://api.raffle.ai/v2."
+msgstr "Raffle API-basis-URL. Standardværdi er https://api.raffle.ai/v2."
+
+#: includes/admin.php
+msgid "Search UID"
+msgstr "Søgnings-UID"
+
+#: includes/admin.php
+msgid "The UID of your Raffle Search UI (Tool UID). Found in the Install modal of your tool in the Raffle Web App."
+msgstr "UID for din Raffle Search UI (Værktøjs-UID). Findes i installationsvinduet for dit værktøj i Raffle Web App."
+
+#: includes/admin.php
+msgid "Show References"
+msgstr "Vis referencer"
+
+#: includes/admin.php
+msgid "Display the References list below the AI summary."
+msgstr "Vis referencelisten under AI-resuméet."
+
+#: includes/admin.php
+msgid "Settings saved successfully."
+msgstr "Indstillinger gemt."
+
+#: includes/admin.php
+msgid "Save Settings"
+msgstr "Gem indstillinger"
+
+#: src/components/RaffleSearch.jsx
+msgid "Search\xe2\x80\xa6"
+msgstr "Søg\xe2\x80\xa6"
+
+#: src/components/RaffleSearch.jsx
+msgctxt "search input aria-label"
+msgid "Search"
+msgstr "Søg"
+
+#: src/components/RaffleSearch.jsx
+msgid "Submit search"
+msgstr "Foretag søgning"
+
+#: src/components/RaffleSearch.jsx
+msgid "Suggestions"
+msgstr "Forslag"
+
+#: src/components/RaffleSearch.jsx
+msgid "Popular Questions"
+msgstr "Populære spørgsmål"
+
+#: src/components/RaffleSearch.jsx
+msgid "AI Summary"
+msgstr "AI-resumé"
+
+#: src/components/RaffleSearch.jsx
+msgid "References"
+msgstr "Referencer"
+
+#: src/components/RaffleSearch.jsx
+msgid "No summary available for this query."
+msgstr "Intet resumé tilgængeligt for denne søgning."
+
+#: src/components/RaffleSearch.jsx
+msgid "No results found for this query."
+msgstr "Ingen resultater fundet for denne søgning."
