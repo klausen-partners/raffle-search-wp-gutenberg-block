@@ -197,6 +197,23 @@ export default function RaffleSearch({ searchUid }) {
 		!hasSearched && !showSuggestions && topQuestions.length > 0;
 	const showLeftPanel = showSuggestions || showTopQuestions;
 
+	// Helper: should we hide the excerpt for this result?
+	function shouldHideExcerpt(result) {
+		const types = (window.raffleSettings?.hideExcerptTypes || '')
+			.split(',')
+			.map((t) => t.trim().toLowerCase())
+			.filter(Boolean);
+		if (!types.length) return false;
+		if (!result.url) return false;
+		try {
+			const urlObj = new URL(result.url, window.location.origin);
+			const ext = urlObj.pathname.split('.').pop().toLowerCase();
+			return types.includes(ext);
+		} catch (e) {
+			return false;
+		}
+	}
+
 	return (
 		<div className='raffle-search-block'>
 			{/* ---------------------------------------------------------------- */}
@@ -347,6 +364,7 @@ export default function RaffleSearch({ searchUid }) {
 								const isPdf = result.url
 									?.toLowerCase()
 									.endsWith('.pdf');
+								const hideExcerpt = shouldHideExcerpt(result);
 								return (
 									<li key={i} className='raffle-result-card'>
 										<div className='raffle-result-url'>
@@ -370,13 +388,15 @@ export default function RaffleSearch({ searchUid }) {
 										>
 											{result.title}
 										</a>
-										<div
-											className='raffle-result-snippet'
-											/* eslint-disable-next-line react/no-danger */
-											dangerouslySetInnerHTML={{
-												__html: result.content,
-											}}
-										/>
+										{!hideExcerpt && (
+											<div
+												className='raffle-result-snippet'
+												/* eslint-disable-next-line react/no-danger */
+												dangerouslySetInnerHTML={{
+													__html: result.content,
+												}}
+											/>
+										)}
 									</li>
 								);
 							})}

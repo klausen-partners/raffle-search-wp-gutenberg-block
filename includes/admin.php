@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/helpers.php';
+
 /**
  * Admin settings page for the Raffle Search plugin.
  *
@@ -65,6 +67,16 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_hide_excerpt_types',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'raffle_search_sanitize_types',
+			'default'           => 'pdf',
+		)
+	);
+
 	add_settings_section(
 		'raffle_search_main_section',
 		__( 'API Configuration', 'raffle-search' ),
@@ -103,6 +115,24 @@ function raffle_search_register_settings() {
 		'raffle-search-settings',
 		'raffle_search_main_section'
 	);
+
+	add_settings_field(
+		'raffle_search_hide_excerpt_types',
+		__( 'Hide Excerpts for Types', 'raffle-search' ),
+		'raffle_search_field_hide_excerpt_types',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
+function raffle_search_field_hide_excerpt_types() {
+	$value = get_option( 'raffle_search_hide_excerpt_types', 'pdf' );
+	?>
+<input type="text" id="raffle_search_hide_excerpt_types" name="raffle_search_hide_excerpt_types"
+    value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="pdf,docx" />
+<p class="description">
+    <?php esc_html_e( 'Comma-separated list of result types (e.g. pdf,docx) for which excerpts/snippets should be hidden. You can add your own types.', 'raffle-search' ); ?>
+</p>
+<?php
+}
 function raffle_search_field_hide_summary_button() {
 	$value = get_option( 'raffle_search_hide_summary_button', false );
 	?>
