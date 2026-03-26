@@ -39,6 +39,16 @@ function raffle_search_register_settings() {
 
 	register_setting(
 		'raffle_search_options',
+		'raffle_search_excerpt_trim_length',
+		array(
+			'type'              => 'integer',
+			'sanitize_callback' => 'raffle_search_sanitize_trim_length',
+			'default'           => null,
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
 		'raffle_search_uid',
 		array(
 			'type'              => 'string',
@@ -117,8 +127,16 @@ function raffle_search_register_settings() {
 	);
 
 	add_settings_field(
+		'raffle_search_excerpt_trim_length',
+		__( 'Excerpt trim Length', 'raffle-search' ),
+		'raffle_search_field_excerpt_trim_length',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
+
+	add_settings_field(
 		'raffle_search_hide_excerpt_types',
-		__( 'Hide Excerpts for Types', 'raffle-search' ),
+		__( 'Hide excerpts for Types', 'raffle-search' ),
 		'raffle_search_field_hide_excerpt_types',
 		'raffle-search-settings',
 		'raffle_search_main_section'
@@ -163,8 +181,12 @@ function raffle_search_field_base_url() {
 function raffle_search_field_search_uid() {
 	$value = get_option( 'raffle_search_uid', '' );
 	?>
-<input type="text" id="raffle_search_uid" name="raffle_search_uid" value="<?php echo esc_attr( $value ); ?>"
-    class="regular-text" placeholder="D2FF7152-8089-41A9-A65D-E82111A11E49" />
+<input type="password" id="raffle_search_uid" name="raffle_search_uid" value="<?php echo esc_attr( $value ); ?>"
+    class="regular-text" placeholder="D2FF7152-8089-41A9-A65D-E82111A11E49" autocomplete="off" />
+<button type="button" onclick="
+		var f = document.getElementById('raffle_search_uid');
+		if (f.type === 'password') { f.type = 'text'; this.textContent = 'Hide'; } else { f.type = 'password'; this.textContent = 'Show'; }
+	" style="margin-left:8px;">Show</button>
 <p class="description">
     <?php esc_html_e( 'The UID of your Raffle Search UI (Tool UID). Found in the Install modal of your tool in the Raffle Web App.', 'raffle-search' ); ?>
 </p>
@@ -183,6 +205,25 @@ function raffle_search_field_show_references() {
 }
 
 // Render the settings page.
+// Sanitize the trim length: allow null or positive integer
+function raffle_search_sanitize_trim_length( $value ) {
+	if ( $value === '' || is_null( $value ) ) {
+		return null;
+	}
+	$int = intval( $value );
+	return $int > 0 ? $int : null;
+}
+
+function raffle_search_field_excerpt_trim_length() {
+	$value = get_option( 'raffle_search_excerpt_trim_length', null );
+	?>
+<input type="number" id="raffle_search_excerpt_trim_length" name="raffle_search_excerpt_trim_length"
+    value="<?php echo esc_attr( $value ); ?>" class="small-text" min="1" placeholder="None" />
+<p class="description">
+    <?php esc_html_e( 'Maximum number of characters to show in each result excerpt/snippet. Leave blank for no trimming.', 'raffle-search' ); ?>
+</p>
+<?php
+}
 function raffle_search_render_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
@@ -190,24 +231,35 @@ function raffle_search_render_settings_page() {
 	$logo_url = plugins_url( 'assets/logo.svg', dirname( __FILE__ ) );
 	?>
 <div class="wrap">
-	<div style="margin-bottom: 24px; display: flex; align-items: center; gap: 24px;">
-		<img src="<?php echo esc_attr( $logo_url ); ?>" alt="Raffle Search Logo" style="height: 64px; width: 64px; background: #12151f; border-radius: 8px;" />
-		<h1 style="margin: 0; padding: 0;"><?php echo esc_html( get_admin_page_title() ); ?></h1>
-	</div>
+    <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+        <img src="<?php echo esc_attr( $logo_url ); ?>" alt="Raffle Search Logo"
+            style="height: 64px; width: 64px; background: #12151f; border-radius: 8px;" />
+        <h1 style="margin: 0; padding: 0;"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+    </div>
 
-	<?php if ( isset( $_GET['settings-updated'] ) ) : ?>
-	<div class="notice notice-success is-dismissible">
-		<p><?php esc_html_e( 'Settings saved successfully.', 'raffle-search' ); ?></p>
-	</div>
-	<?php endif; ?>
+    <?php if ( isset( $_GET['settings-updated'] ) ) : ?>
+    <div class="notice notice-success is-dismissible">
+        <p><?php esc_html_e( 'Settings saved successfully.', 'raffle-search' ); ?></p>
+    </div>
+    <?php endif; ?>
 
-	<form method="post" action="options.php">
-		<?php
+    <form method="post" action="options.php">
+        <?php
 			settings_fields( 'raffle_search_options' );
 			do_settings_sections( 'raffle-search-settings' );
 			submit_button( __( 'Save Settings', 'raffle-search' ) );
 		?>
-	</form>
+    </form>
+
+    <hr style="margin: 32px 0;" />
+    <div style="font-size: 13px; color: #666;">
+        <p>
+            <?php esc_html_e( 'This plugin is built and maintained by', 'raffle-search' ); ?>
+            <a href="https://klausenogpartners.dk" target="_blank" rel="noopener noreferrer">Klausen og Partners</a>.
+            <?php esc_html_e( 'The Raffle logo is owned by ', 'raffle-search' ); ?>
+            <a href="https://business.raffle.ai/about" target="_blank" rel="noopener noreferrer">Raffle</a>
+        </p>
+    </div>
 </div>
 <?php
 }

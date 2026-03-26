@@ -35,6 +35,8 @@ function setUrlParam( value ) {
 export default function RaffleSearch( { searchUid } ) {
 	// Option to hide the summary button, passed from backend
 	const hideSummaryButton = window.raffleSettings?.hideSummaryButton;
+	// Option to trim excerpt length, passed from backend (null or integer)
+	const excerptTrimLength = window.raffleSettings?.excerptTrimLength;
 
 	// Filter summary HTML to remove <button> inside <a> if hideSummaryButton is true
 	function filterSummaryContent( html ) {
@@ -67,6 +69,7 @@ export default function RaffleSearch( { searchUid } ) {
 	const initialQ =
 		new URLSearchParams( window.location.search ).get( 'q' ) ?? '';
 	// Resolve the UID: per-block prop takes precedence over global settings.
+	// The UID is used internally for API calls only and is never rendered in the UI.
 	const uid = searchUid || window.raffleSettings?.searchUid || '';
 
 	const [ query, setQuery ] = useState( initialQ );
@@ -223,6 +226,39 @@ export default function RaffleSearch( { searchUid } ) {
 		} catch ( e ) {
 			return false;
 		}
+	}
+
+	// Helper: trim HTML string to a max character length, preserving tags (simple, not perfect)
+	function trimHtml( html, maxLength ) {
+		if (
+			! maxLength ||
+			typeof html !== 'string' ||
+			html.length <= maxLength
+		) {
+			return html;
+		}
+		// Remove tags for length calculation, but keep them in output
+		const text = html.replace( /<[^>]+>/g, '' );
+		if ( text.length <= maxLength ) {
+			return html;
+		}
+		// Find the cutoff point in the text
+		let count = 0;
+		let i = 0;
+		for ( ; i < html.length && count < maxLength; i++ ) {
+			if ( html[ i ] === '<' ) {
+				while ( i < html.length && html[ i ] !== '>' ) {
+					i++;
+				}
+			} else {
+				count++;
+			}
+		}
+		let trimmed = html.slice( 0, i );
+		if ( ! trimmed.endsWith( '...' ) ) {
+			trimmed += '...';
+		}
+		return trimmed;
 	}
 
 	return (
@@ -417,7 +453,14 @@ export default function RaffleSearch( { searchUid } ) {
 												className="raffle-result-snippet"
 												/* eslint-disable-next-line react/no-danger */
 												dangerouslySetInnerHTML={ {
-													__html: result.content,
+													__html:
+														excerptTrimLength &&
+														excerptTrimLength > 0
+															? trimHtml(
+																	result.content,
+																	excerptTrimLength
+															  )
+															: result.content,
 												} }
 											/>
 										) }
