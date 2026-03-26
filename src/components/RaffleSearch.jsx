@@ -33,6 +33,35 @@ function setUrlParam(value) {
 }
 
 export default function RaffleSearch({ searchUid }) {
+	// Option to hide the summary button, passed from backend
+	const hideSummaryButton = window.raffleSettings?.hideSummaryButton;
+
+	// Filter summary HTML to remove <button> inside <a> if hideSummaryButton is true
+	function filterSummaryContent(html) {
+		if (!hideSummaryButton) return html;
+		const div = document.createElement('div');
+		div.innerHTML = html;
+		// Remove <a> tags that contain a <button>
+		div.querySelectorAll('a > button').forEach((btn) => {
+			const a = btn.parentNode;
+			if (a && a.tagName === 'A') {
+				a.remove();
+			}
+		});
+		// Remove <a> tags that are the only child in a <p> (e.g., link CTAs)
+		div.querySelectorAll('p').forEach((p) => {
+			if (
+				p.children.length === 1 &&
+				p.children[0].tagName === 'A' &&
+				p.textContent.trim() === p.children[0].textContent.trim()
+			) {
+				p.remove();
+			}
+		});
+		// Remove any <a> tags at the root level (not inside <p>)
+		div.querySelectorAll(':scope > a').forEach((a) => a.remove());
+		return div.innerHTML;
+	}
 	const initialQ = new URLSearchParams(window.location.search).get('q') ?? '';
 	// Resolve the UID: per-block prop takes precedence over global settings.
 	const uid = searchUid || window.raffleSettings?.searchUid || '';
@@ -259,7 +288,9 @@ export default function RaffleSearch({ searchUid }) {
 									className='raffle-summary-content'
 									/* eslint-disable-next-line react/no-danger */
 									dangerouslySetInnerHTML={{
-										__html: summary.summary,
+										__html: filterSummaryContent(
+											summary.summary,
+										),
 									}}
 								/>
 								{window.raffleSettings?.showReferences &&

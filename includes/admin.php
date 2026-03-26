@@ -55,6 +55,16 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_hide_summary_button',
+		array(
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'default'           => false,
+		)
+	);
+
 	add_settings_section(
 		'raffle_search_main_section',
 		__( 'API Configuration', 'raffle-search' ),
@@ -85,6 +95,24 @@ function raffle_search_register_settings() {
 		'raffle-search-settings',
 		'raffle_search_main_section'
 	);
+
+	add_settings_field(
+		'raffle_search_hide_summary_button',
+		__( 'Hide summary button', 'raffle-search' ),
+		'raffle_search_field_hide_summary_button',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
+function raffle_search_field_hide_summary_button() {
+	$value = get_option( 'raffle_search_hide_summary_button', false );
+	?>
+<label for="raffle_search_hide_summary_button">
+    <input type="checkbox" id="raffle_search_hide_summary_button" name="raffle_search_hide_summary_button" value="1"
+        <?php checked( 1, $value ); ?> />
+    <?php esc_html_e( 'Hide the "Learn More" button in the AI summary.', 'raffle-search' ); ?>
+</label>
+<?php
+}
 }
 add_action( 'admin_init', 'raffle_search_register_settings' );
 
@@ -117,8 +145,8 @@ function raffle_search_field_show_references() {
 	$value = get_option( 'raffle_search_show_references', true );
 	?>
 <label for="raffle_search_show_references">
-    <input type="checkbox" id="raffle_search_show_references" name="raffle_search_show_references"
-        value="1" <?php checked( 1, $value ); ?> />
+    <input type="checkbox" id="raffle_search_show_references" name="raffle_search_show_references" value="1"
+        <?php checked( 1, $value ); ?> />
     <?php esc_html_e( 'Display the References list below the AI summary.', 'raffle-search' ); ?>
 </label>
 <?php

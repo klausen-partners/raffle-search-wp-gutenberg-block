@@ -68,6 +68,7 @@ function raffle_search_localize_view_script() {
 			'baseUrl'        => get_option( 'raffle_search_base_url', 'https://api.raffle.ai/v2' ),
 			'searchUid'      => get_option( 'raffle_search_uid', '' ),
 			'showReferences' => (bool) get_option( 'raffle_search_show_references', true ),
+			'hideSummaryButton' => (bool) get_option( 'raffle_search_hide_summary_button', false ),
 		)
 	);
 
