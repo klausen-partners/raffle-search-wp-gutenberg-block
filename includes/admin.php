@@ -187,23 +187,27 @@ function raffle_search_render_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
+	$logo_url = plugins_url( 'assets/logo.svg', dirname( __FILE__ ) );
 	?>
 <div class="wrap">
-    <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+	<div style="margin-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+		<img src="<?php echo esc_attr( $logo_url ); ?>" alt="Raffle Search Logo" style="height: 64px; width: 64px; background: #12151f; border-radius: 8px;" />
+		<h1 style="margin: 0; padding: 0;"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+	</div>
 
-    <?php if ( isset( $_GET['settings-updated'] ) ) : ?>
-    <div class="notice notice-success is-dismissible">
-        <p><?php esc_html_e( 'Settings saved successfully.', 'raffle-search' ); ?></p>
-    </div>
-    <?php endif; ?>
+	<?php if ( isset( $_GET['settings-updated'] ) ) : ?>
+	<div class="notice notice-success is-dismissible">
+		<p><?php esc_html_e( 'Settings saved successfully.', 'raffle-search' ); ?></p>
+	</div>
+	<?php endif; ?>
 
-    <form method="post" action="options.php">
-        <?php
+	<form method="post" action="options.php">
+		<?php
 			settings_fields( 'raffle_search_options' );
 			do_settings_sections( 'raffle-search-settings' );
 			submit_button( __( 'Save Settings', 'raffle-search' ) );
-			?>
-    </form>
+		?>
+	</form>
 </div>
 <?php
 }
