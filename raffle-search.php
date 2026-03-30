@@ -78,3 +78,27 @@ function raffle_search_localize_view_script() {
 	wp_set_script_translations( $handle, 'raffle-search', RAFFLE_SEARCH_DIR . 'languages' );
 }
 add_action( 'enqueue_block_assets', 'raffle_search_localize_view_script' );
+
+// Enqueue frontend script variable for default image
+add_action( 'wp_enqueue_scripts', function() {
+	if ( ! is_admin() ) {
+		$default_image_url = function_exists('raffle_search_get_default_image_url') ? raffle_search_get_default_image_url() : '';
+		// Enqueue the view script if not already enqueued
+		$handle = 'raffle-search-view';
+		if ( ! wp_script_is( $handle, 'enqueued' ) ) {
+			$asset = include RAFFLE_SEARCH_DIR . 'build/view.asset.php';
+			wp_enqueue_script(
+				$handle,
+				RAFFLE_SEARCH_URL . 'build/view.js',
+				$asset['dependencies'],
+				$asset['version'],
+				true
+			);
+		}
+		wp_localize_script(
+			$handle,
+			'raffleSearchDefaultImageUrl',
+			$default_image_url
+		);
+	}
+} );

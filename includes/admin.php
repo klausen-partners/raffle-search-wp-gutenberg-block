@@ -27,6 +27,16 @@ add_action( 'admin_menu', 'raffle_search_add_settings_page' );
 
 // Register settings, sections, and fields.
 function raffle_search_register_settings() {
+	   // Register default image URL option
+	   register_setting(
+		   'raffle_search_options',
+		   'raffle_search_default_image_url',
+		   array(
+			   'type'              => 'string',
+			   'sanitize_callback' => 'esc_url_raw',
+			   'default'           => '',
+		   )
+	   );
 	register_setting(
 		'raffle_search_options',
 		'raffle_search_base_url',
@@ -141,6 +151,14 @@ function raffle_search_register_settings() {
 		'raffle-search-settings',
 		'raffle_search_main_section'
 	);
+
+	add_settings_field(
+		'raffle_search_default_image_url',
+		__( 'Default Result Image', 'raffle-search' ),
+		'raffle_search_field_default_image_url',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
 function raffle_search_field_hide_excerpt_types() {
 	$value = get_option( 'raffle_search_hide_excerpt_types', 'pdf' );
 	?>
@@ -152,6 +170,42 @@ function raffle_search_field_hide_excerpt_types() {
 <?php
 }
 function raffle_search_field_hide_summary_button() {
+	// Media upload field for default image
+	function raffle_search_field_default_image_url() {
+		$value = get_option( 'raffle_search_default_image_url', '' );
+		$img_preview = $value ? '<img src="' . esc_url( $value ) . '" style="max-width:100px;max-height:100px;display:block;margin-bottom:8px;" />' : '';
+		?>
+		<div id="raffle-search-default-image-upload">
+			<?php echo $img_preview; ?>
+			<input type="url" id="raffle_search_default_image_url" name="raffle_search_default_image_url" value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="https://..." />
+			<button type="button" class="button" id="raffle_search_default_image_upload_btn"><?php esc_html_e( 'Upload or Select Image', 'raffle-search' ); ?></button>
+			<p class="description"><?php esc_html_e( 'Select or upload a default image to use when no image is found in search results.', 'raffle-search' ); ?></p>
+		</div>
+		<script>
+		(function($){
+			$(function(){
+				var frame;
+				$('#raffle_search_default_image_upload_btn').on('click', function(e){
+					e.preventDefault();
+					if (frame) { frame.open(); return; }
+					frame = wp.media({
+						title: '<?php echo esc_js( __( 'Select or Upload Default Image', 'raffle-search' ) ); ?>',
+						button: { text: '<?php echo esc_js( __( 'Use this image', 'raffle-search' ) ); ?>' },
+						multiple: false
+					});
+					frame.on('select', function(){
+						var attachment = frame.state().get('selection').first().toJSON();
+						$('#raffle_search_default_image_url').val(attachment.url).trigger('change');
+						$('#raffle-search-default-image-upload img').remove();
+						$('#raffle-search-default-image-upload').prepend('<img src="'+attachment.url+'" style="max-width:100px;max-height:100px;display:block;margin-bottom:8px;" />');
+					});
+					frame.open();
+				});
+			});
+		})(jQuery);
+		</script>
+		<?php
+	}
 	$value = get_option( 'raffle_search_hide_summary_button', false );
 	?>
 <label for="raffle_search_hide_summary_button">
@@ -225,10 +279,14 @@ function raffle_search_field_excerpt_trim_length() {
 <?php
 }
 function raffle_search_render_settings_page() {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		return;
-	}
-	$logo_url = plugins_url( 'assets/logo.svg', dirname( __FILE__ ) );
+	   if ( ! current_user_can( 'manage_options' ) ) {
+		   return;
+	   }
+	   // Ensure media scripts are loaded for uploader
+	   if ( function_exists( 'wp_enqueue_media' ) ) {
+		   wp_enqueue_media();
+	   }
+	   $logo_url = plugins_url( 'assets/logo.svg', dirname( __FILE__ ) );
 	?>
 <div class="wrap">
     <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 24px;">

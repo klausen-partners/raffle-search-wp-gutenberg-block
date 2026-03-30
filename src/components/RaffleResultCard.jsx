@@ -3,6 +3,9 @@ import { IconGlobe, IconPdf } from './icons';
 import { trimHtml } from '../utils/html';
 import { formatDate } from '../utils/date';
 
+// Default image URL injected by backend (see below)
+const DEFAULT_IMAGE_URL = window?.raffleSearchDefaultImageUrl || null;
+
 /**
  * @param {Object}                                       props
  * @param {import('../types/searchResult').SearchResult} props.result
@@ -45,6 +48,11 @@ export default function RaffleResultCard({
 		}
 	}
 
+	// Use default image if none found
+	if (!imageUrl && DEFAULT_IMAGE_URL) {
+		imageUrl = DEFAULT_IMAGE_URL;
+	}
+
 	const isPdf = result.url?.toLowerCase().endsWith('.pdf');
 	const hideExcerpt = false; // always show for this design
 
@@ -60,7 +68,14 @@ export default function RaffleResultCard({
 			>
 				{imageUrl && (
 					<div className='raffle-result-image'>
-						<img src={imageUrl} alt={result.title || ''} />
+						<img
+							src={imageUrl}
+							alt={result.title || ''}
+							onError={(e) => {
+								if (DEFAULT_IMAGE_URL)
+									e.target.src = DEFAULT_IMAGE_URL;
+							}}
+						/>
 					</div>
 				)}
 				<div
