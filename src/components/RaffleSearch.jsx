@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import RaffleResultCard from './RaffleResultCard';
 import { __ } from '@wordpress/i18n';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	fetchTopQuestions,
 	fetchSuggestions,
@@ -9,19 +9,10 @@ import {
 	sendFeedback,
 } from '../api/api';
 import { useDebounce } from '../hooks/useDebounce';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Spinner from './Spinner';
-import {
-	IconSearch,
-	IconSubmit,
-	IconGlobe,
-	IconPdf,
-	IconSparkle,
-} from './icons';
+import { IconSearch, IconSubmit, IconSparkle } from './icons';
 
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
-// Sync a query string param with the URL without adding a history entry.
 function setUrlParam( value ) {
 	const url = new URL( window.location.href );
 	if ( value ) {
@@ -33,26 +24,21 @@ function setUrlParam( value ) {
 }
 
 export default function RaffleSearch( { searchUid } ) {
-	// Option to hide the summary button, passed from backend
 	const hideSummaryButton = window.raffleSettings?.hideSummaryButton;
-	// Option to trim excerpt length, passed from backend (null or integer)
 	const excerptTrimLength = window.raffleSettings?.excerptTrimLength;
 
-	// Filter summary HTML to remove <button> inside <a> if hideSummaryButton is true
 	function filterSummaryContent( html ) {
 		if ( ! hideSummaryButton ) {
 			return html;
 		}
 		const div = document.createElement( 'div' );
 		div.innerHTML = html;
-		// Remove <a> tags that contain a <button>
 		div.querySelectorAll( 'a > button' ).forEach( ( btn ) => {
 			const a = btn.parentNode;
 			if ( a && a.tagName === 'A' ) {
 				a.remove();
 			}
 		} );
-		// Remove <a> tags that are the only child in a <p> (e.g., link CTAs)
 		div.querySelectorAll( 'p' ).forEach( ( p ) => {
 			if (
 				p.children.length === 1 &&
@@ -62,14 +48,12 @@ export default function RaffleSearch( { searchUid } ) {
 				p.remove();
 			}
 		} );
-		// Remove any <a> tags at the root level (not inside <p>)
 		div.querySelectorAll( ':scope > a' ).forEach( ( a ) => a.remove() );
 		return div.innerHTML;
 	}
+
 	const initialQ =
 		new URLSearchParams( window.location.search ).get( 'q' ) ?? '';
-	// Resolve the UID: per-block prop takes precedence over global settings.
-	// The UID is used internally for API calls only and is never rendered in the UI.
 	const uid = searchUid || window.raffleSettings?.searchUid || '';
 
 	const [ query, setQuery ] = useState( initialQ );
@@ -80,14 +64,12 @@ export default function RaffleSearch( { searchUid } ) {
 	const debouncedInput = useDebounce( inputValue, 500 );
 	const debouncedSearch = useDebounce( inputValue, 800 );
 
-	// --- Top Questions (loaded once on mount) ---
 	const { data: topQuestions = [], isLoading: isLoadingTopQ } = useQuery( {
 		queryKey: [ 'raffle-top-questions', uid ],
 		queryFn: () => fetchTopQuestions( uid ),
-		staleTime: 5 * 60 * 1000, // 5 minutes
+		staleTime: 5 * 60 * 1000,
 	} );
 
-	// --- Autocomplete ---
 	const {
 		data: suggestions = [],
 		mutate: getSuggestions,
@@ -97,56 +79,46 @@ export default function RaffleSearch( { searchUid } ) {
 		mutationFn: ( q ) => fetchSuggestions( q, uid ),
 	} );
 
-	// --- Summary ---
 	const {
 		data: summary,
 		isPending: isLoadingSummary,
 		mutate: getSummary,
-		// clearSummary is not used
 	} = useMutation( {
 		mutationKey: [ 'raffle-summary' ],
 		mutationFn: ( q ) => fetchSummary( q, uid ),
 	} );
 
-	// --- Search results ---
 	const {
 		data: results = [],
 		isPending: isLoadingResults,
 		mutate: getResults,
-		// clearResults is not used
 	} = useMutation( {
 		mutationKey: [ 'raffle-search' ],
 		mutationFn: ( q ) => fetchSearchResults( q, uid ),
 	} );
 
-	// --- Feedback ---
 	const { mutate: submitFeedback } = useMutation( {
 		mutationKey: [ 'raffle-feedback' ],
 		mutationFn: sendFeedback,
 	} );
 
-	// If a query was in the URL on load, run the search immediately.
 	useEffect( () => {
 		if ( initialQ.trim().length >= 3 ) {
 			handleSearch( initialQ );
 		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Trigger suggestions when the debounced input reaches 3+ chars.
 	useEffect( () => {
 		if ( isUserTyping && debouncedInput.length >= 3 ) {
 			getSuggestions( debouncedInput );
 		} else if ( debouncedInput.length < 3 ) {
 			clearSuggestions();
 		}
-	}, [ debouncedInput, isUserTyping ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ debouncedInput, isUserTyping ] );
 
-	// Auto-search after the user stops typing (800 ms debounce).
 	useEffect( () => {
 		if ( isUserTyping && debouncedSearch.trim().length >= 3 ) {
 			handleSearch( debouncedSearch );
-
-			// Add GTM data layer event for search performed via auto-search.
 			if ( window.dataLayer ) {
 				window.dataLayer.push( {
 					event: 'raffle_auto_search',
@@ -154,7 +126,7 @@ export default function RaffleSearch( { searchUid } ) {
 				} );
 			}
 		}
-	}, [ debouncedSearch ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ debouncedSearch ] );
 
 	const handleSearch = useCallback(
 		( searchQuery = query ) => {
@@ -201,71 +173,13 @@ export default function RaffleSearch( { searchUid } ) {
 		}
 	};
 
-	// What to show in the left panel.
 	const showSuggestions = isUserTyping && suggestions.length > 0;
 	const showTopQuestions =
 		! hasSearched && ! showSuggestions && topQuestions.length > 0;
 	const showLeftPanel = showSuggestions || showTopQuestions;
 
-	// Helper: should we hide the excerpt for this result?
-	function shouldHideExcerpt( result ) {
-		const types = ( window.raffleSettings?.hideExcerptTypes || '' )
-			.split( ',' )
-			.map( ( t ) => t.trim().toLowerCase() )
-			.filter( Boolean );
-		if ( ! types.length ) {
-			return false;
-		}
-		if ( ! result.url ) {
-			return false;
-		}
-		try {
-			const urlObj = new URL( result.url, window.location.origin );
-			const ext = urlObj.pathname.split( '.' ).pop().toLowerCase();
-			return types.includes( ext );
-		} catch ( e ) {
-			return false;
-		}
-	}
-
-	// Helper: trim HTML string to a max character length, preserving tags (simple, not perfect)
-	function trimHtml( html, maxLength ) {
-		if (
-			! maxLength ||
-			typeof html !== 'string' ||
-			html.length <= maxLength
-		) {
-			return html;
-		}
-		// Remove tags for length calculation, but keep them in output
-		const text = html.replace( /<[^>]+>/g, '' );
-		if ( text.length <= maxLength ) {
-			return html;
-		}
-		// Find the cutoff point in the text
-		let count = 0;
-		let i = 0;
-		for ( ; i < html.length && count < maxLength; i++ ) {
-			if ( html[ i ] === '<' ) {
-				while ( i < html.length && html[ i ] !== '>' ) {
-					i++;
-				}
-			} else {
-				count++;
-			}
-		}
-		let trimmed = html.slice( 0, i );
-		if ( ! trimmed.endsWith( '...' ) ) {
-			trimmed += '...';
-		}
-		return trimmed;
-	}
-
 	return (
 		<div className="raffle-search-block">
-			{ /* ---------------------------------------------------------------- */ }
-			{ /* Search input */ }
-			{ /* ---------------------------------------------------------------- */ }
 			<div className="raffle-search-input-row">
 				<span className="raffle-search-icon-left">
 					<IconSearch />
@@ -289,10 +203,6 @@ export default function RaffleSearch( { searchUid } ) {
 					<IconSubmit />
 				</button>
 			</div>
-
-			{ /* ---------------------------------------------------------------- */ }
-			{ /* Suggestions / Top Questions panel */ }
-			{ /* ---------------------------------------------------------------- */ }
 			{ showLeftPanel && (
 				<div className="raffle-panel">
 					<h3 className="raffle-panel-title">
@@ -342,13 +252,8 @@ export default function RaffleSearch( { searchUid } ) {
 					) }
 				</div>
 			) }
-
-			{ /* ---------------------------------------------------------------- */ }
-			{ /* Results area (shown after first search) */ }
-			{ /* ---------------------------------------------------------------- */ }
 			{ hasSearched && (
 				<div className="raffle-results-area">
-					{ /* Summary */ }
 					<div className="raffle-panel raffle-panel--summary">
 						<h3 className="raffle-panel-title raffle-panel-title--ai">
 							<IconSparkle />{ ' ' }
@@ -400,8 +305,6 @@ export default function RaffleSearch( { searchUid } ) {
 							</p>
 						) }
 					</div>
-
-					{ /* Search Results */ }
 					{ isLoadingResults && (
 						<div className="raffle-results-loading">
 							<Spinner />
@@ -417,56 +320,14 @@ export default function RaffleSearch( { searchUid } ) {
 					) }
 					{ ! isLoadingResults && results.length > 0 && (
 						<ul className="raffle-results-list">
-							{ results.map( ( result, i ) => {
-								const isPdf = result.url
-									?.toLowerCase()
-									.endsWith( '.pdf' );
-								const hideExcerpt = shouldHideExcerpt( result );
-								return (
-									<li
-										key={ i }
-										className="raffle-result-card"
-									>
-										<div className="raffle-result-url">
-											{ isPdf ? (
-												<IconPdf />
-											) : (
-												<IconGlobe />
-											) }
-											<span>{ result.url }</span>
-										</div>
-										<a
-											href={ result.url }
-											target="_blank"
-											rel="noopener noreferrer"
-											className="raffle-result-link"
-											onClick={ () =>
-												handleResultClick(
-													result.feedback_data
-												)
-											}
-										>
-											{ result.title }
-										</a>
-										{ ! hideExcerpt && (
-											<div
-												className="raffle-result-snippet"
-												/* eslint-disable-next-line react/no-danger */
-												dangerouslySetInnerHTML={ {
-													__html:
-														excerptTrimLength &&
-														excerptTrimLength > 0
-															? trimHtml(
-																	result.content,
-																	excerptTrimLength
-															  )
-															: result.content,
-												} }
-											/>
-										) }
-									</li>
-								);
-							} ) }
+							{ results.map( ( result, i ) => (
+								<RaffleResultCard
+									key={ i }
+									result={ result }
+									excerptTrimLength={ excerptTrimLength }
+									onResultClick={ handleResultClick }
+								/>
+							) ) }
 						</ul>
 					) }
 				</div>

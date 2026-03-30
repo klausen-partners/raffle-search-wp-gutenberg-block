@@ -1,3 +1,221 @@
+.raffle-result-meta-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	margin-bottom: 0.7rem;
+}
+
+.raffle-result-image {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #f3f4f6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+	margin-top: 0.2em;
+}
+.raffle-result-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.raffle-result-meta-details {
+	flex: 1 1 0%;
+	display: flex;
+	flex-direction: column;
+	gap: 0.18rem 0;
+	min-width: 0;
+}
+
+.raffle-meta-groups-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.5rem;
+	align-items: flex-end;
+	margin-bottom: 0.1em;
+}
+
+.raffle-meta-group-label {
+	font-size: 0.74rem;
+	font-weight: 600;
+	color: #a1a1aa;
+	margin-right: 0.3em;
+	letter-spacing: 0.01em;
+	text-transform: uppercase;
+}
+
+.raffle-meta-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.18rem;
+	align-items: center;
+}
+
+.raffle-meta-tag {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.81rem;
+	font-weight: 500;
+	padding: 0.13em 0.7em;
+	border-radius: 999px;
+	background: #f3f4f6;
+	color: #374151;
+	margin-right: 0.15em;
+	margin-bottom: 0.1em;
+	line-height: 1.5;
+	white-space: nowrap;
+	transition:
+		background 0.15s,
+		color 0.15s;
+}
+.raffle-meta-tag--section {
+	background: #e0e7ff;
+	color: #3730a3;
+}
+.raffle-meta-tag--tag {
+	background: #d1fae5;
+	color: #047857;
+}
+.raffle-meta-tag--author {
+	background: #fce7f3;
+	color: #be185d;
+}
+.raffle-meta-tag--type {
+	background: #fef3c7;
+	color: #b45309;
+}
+.raffle-meta-published-time {
+	font-size: 0.81rem;
+	color: #6b7280;
+	margin-left: 0.5em;
+	white-space: nowrap;
+}
+.raffle-result-description {
+	font-size: 0.89rem;
+	color: #374151;
+	margin-bottom: 0.2em;
+}
+
+/* Title and URL tweaks */
+.raffle-result-url {
+	font-size: 0.78rem;
+	color: #a1a1aa;
+	margin-bottom: 0.1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+.raffle-result-link {
+	font-size: 1.08rem;
+	font-weight: 700;
+	color: #111;
+	text-decoration: none;
+	margin-bottom: 0.1rem;
+	line-height: 1.35;
+	display: inline-block;
+}
+.raffle-result-link:hover {
+	text-decoration: underline;
+	color: #2563eb;
+}
+
+/* Card tweaks */
+.raffle-result-card {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 1rem 1.25rem;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+/* ---- Raffle Search Result Meta & Image ---- */
+.raffle-result-meta-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.raffle-result-image {
+	flex: 0 0 auto;
+	width: 200px;
+	height: 200px;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #f3f4f6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.raffle-result-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.raffle-result-meta-details {
+	flex: 1 1 0%;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 0.5rem;
+	min-width: 0;
+}
+
+.raffle-meta-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+}
+
+.raffle-meta-tag {
+	display: inline-block;
+	font-size: 0.78rem;
+	font-weight: 500;
+	padding: 0.13em 0.7em;
+	border-radius: 999px;
+	background: #f3f4f6;
+	color: #374151;
+	margin-right: 0.15em;
+	margin-bottom: 0.1em;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+.raffle-meta-tag--section {
+	background: #e0e7ff;
+	color: #3730a3;
+}
+.raffle-meta-tag--tag {
+	background: #d1fae5;
+	color: #047857;
+}
+.raffle-meta-tag--author {
+	background: #fce7f3;
+	color: #be185d;
+}
+.raffle-meta-tag--type {
+	background: #fef3c7;
+	color: #b45309;
+}
+.raffle-meta-published-time {
+	font-size: 0.78rem;
+	color: #6b7280;
+	margin-left: 0.5em;
+}
+.raffle-result-description {
+	font-size: 0.89rem;
+	color: #374151;
+	margin-bottom: 0.2em;
+}
 .raffle-list-item button.raffle-list-item-btn {
 	background: none;
 	border: none;
