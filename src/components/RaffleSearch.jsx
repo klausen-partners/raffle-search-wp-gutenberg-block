@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import RaffleResultCard from './RaffleResultCard';
+import RaffleFiltersCard from './RaffleFiltersCard';
+import { getResultType } from '../utils/getResultType';
 import { __ } from '@wordpress/i18n';
 import {
 	fetchTopQuestions,
@@ -22,8 +24,53 @@ function setUrlParam( value ) {
 	}
 	window.history.replaceState( null, '', url.toString() );
 }
-
 export default function RaffleSearch( { searchUid } ) {
+	// --- Type filter state ---
+	const [ selectedType, setSelectedType ] = useState( null );
+
+	// Fetch results FIRST so it's available for useMemo
+
+	// Only keep one useMutation for results
+	const {
+		data: results = [],
+		isPending: isLoadingResults,
+		mutate: getResults,
+	} = useMutation( {
+		mutationKey: [ 'raffle-search' ],
+		mutationFn: ( q ) => fetchSearchResults( q, uid ),
+	} );
+
+	// Compute type counts from results
+	const typeCounts = useMemo( () => {
+		if ( ! results || results.length === 0 ) {
+			return [];
+		}
+		const counts = {};
+		results.forEach( ( r ) => {
+			const type = getResultType( r );
+			if ( ! type ) {
+				return;
+			}
+			counts[ type ] = ( counts[ type ] || 0 ) + 1;
+		} );
+		return [
+			{ value: 'article', label: 'article', count: counts.article || 0 },
+			{ value: 'website', label: 'website', count: counts.website || 0 },
+		];
+	}, [ results ] );
+
+	// Filtered results by type
+	const filteredResults = useMemo( () => {
+		if ( ! selectedType ) {
+			return results;
+		}
+		const filtered = results.filter(
+			( r ) => getResultType( r ) === selectedType
+		);
+		// Debug: log filtered results
+		// console.log('Filtered results for', selectedType, filtered);
+		return filtered;
+	}, [ results, selectedType ] );
 	const hideSummaryButton = window.raffleSettings?.hideSummaryButton;
 	const excerptTrimLength = window.raffleSettings?.excerptTrimLength;
 
@@ -86,15 +133,6 @@ export default function RaffleSearch( { searchUid } ) {
 	} = useMutation( {
 		mutationKey: [ 'raffle-summary' ],
 		mutationFn: ( q ) => fetchSummary( q, uid ),
-	} );
-
-	const {
-		data: results = [],
-		isPending: isLoadingResults,
-		mutate: getResults,
-	} = useMutation( {
-		mutationKey: [ 'raffle-search' ],
-		mutationFn: ( q ) => fetchSearchResults( q, uid ),
 	} );
 
 	const { mutate: submitFeedback } = useMutation( {
@@ -319,16 +357,23 @@ export default function RaffleSearch( { searchUid } ) {
 						</p>
 					) }
 					{ ! isLoadingResults && results.length > 0 && (
-						<ul className="raffle-results-list">
-							{ results.map( ( result, i ) => (
-								<RaffleResultCard
-									key={ i }
-									result={ result }
-									excerptTrimLength={ excerptTrimLength }
-									onResultClick={ handleResultClick }
-								/>
-							) ) }
-						</ul>
+						<>
+							<RaffleFiltersCard
+								types={ typeCounts }
+								selectedType={ selectedType }
+								onSelectType={ setSelectedType }
+							/>
+							<ul className="raffle-results-list">
+								{ filteredResults.map( ( result, i ) => (
+									<RaffleResultCard
+										key={ i }
+										result={ result }
+										excerptTrimLength={ excerptTrimLength }
+										onResultClick={ handleResultClick }
+									/>
+								) ) }
+							</ul>
+						</>
 					) }
 				</div>
 			) }
