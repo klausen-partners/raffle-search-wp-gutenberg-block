@@ -70,7 +70,7 @@ function raffle_search_localize_view_script() {
 			'searchUid'      => get_option( 'raffle_search_uid', '' ),
 			'showReferences' => (bool) get_option( 'raffle_search_show_references', true ),
 			'hideSummaryButton' => (bool) get_option( 'raffle_search_hide_summary_button', false ),
-			'hideExcerptTypes' => get_option( 'raffle_search_hide_excerpt_types', 'pdf' ),
+			'hideExcerptTypes' => get_option( 'raffle_search_hide_excerpt_types', '' ),
 			'excerptTrimLength' => get_option( 'raffle_search_excerpt_trim_length', null ),
 		)
 	);

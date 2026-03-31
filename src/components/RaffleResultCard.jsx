@@ -11,11 +11,13 @@ const DEFAULT_IMAGE_URL = window?.raffleSearchDefaultImageUrl || null;
  * @param {import('../types/searchResult').SearchResult} props.result
  * @param {number}                                       [props.excerptTrimLength]
  * @param {Function}                                     [props.onResultClick]
+ * @param {string[]}                                     [props.hideExcerptTypes]
  */
 export default function RaffleResultCard( {
 	result,
 	excerptTrimLength,
 	onResultClick,
+	hideExcerptTypes = [],
 } ) {
 	// --- Extract metadata ---
 	let imageUrl = null;
@@ -53,8 +55,18 @@ export default function RaffleResultCard( {
 		imageUrl = DEFAULT_IMAGE_URL;
 	}
 
-	const isPdf = result.url?.toLowerCase().endsWith( '.pdf' );
-	const hideExcerpt = false; // always show for this design
+	// Determine file extension/type from URL
+	let fileType = null;
+	if ( result.url ) {
+		const urlParts = result.url.split( '.' );
+		if ( urlParts.length > 1 ) {
+			fileType = urlParts[ urlParts.length - 1 ].toLowerCase();
+		}
+	}
+
+	// Hide excerpt if fileType is in hideExcerptTypes
+	const isPdf = fileType === 'pdf';
+	const hideExcerpt = hideExcerptTypes.includes( fileType );
 
 	return (
 		<li className="raffle-result-card">
