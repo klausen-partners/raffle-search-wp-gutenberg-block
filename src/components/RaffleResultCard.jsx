@@ -70,14 +70,7 @@ export default function RaffleResultCard( {
 
 	return (
 		<li className="raffle-result-card">
-			<div
-				className="raffle-result-meta-row"
-				style={ {
-					display: 'flex',
-					flexDirection: 'row',
-					position: 'relative',
-				} }
-			>
+			<div className="raffle-result-meta-row">
 				{ imageUrl && (
 					<div className="raffle-result-image">
 						<img
@@ -91,26 +84,18 @@ export default function RaffleResultCard( {
 						/>
 					</div>
 				) }
-				<div
-					className="raffle-meta-group raffle-meta-type"
-					style={ {
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'start',
-						overflow: 'hidden',
-						position: 'relative',
-						flex: 1,
-					} }
-				>
-					<div
-						className="raffle-result-url"
-						style={ { overflow: 'hidden', maxWidth: 520 } }
-					>
-						{ isPdf ? <IconPdf /> : <IconGlobe /> }
-						<span style={ { overflow: 'hidden', maxWidth: 520 } }>
-							{ result.url }
+				<div className="raffle-result-url">
+					{ isPdf ? <IconPdf /> : <IconGlobe /> }
+					<span>{ result.url }</span>
+				</div>
+				{ publishedTime && (
+					<div className="raffle-result-meta-details">
+						<span className="raffle-meta-published-time">
+							{ publishedTime }
 						</span>
 					</div>
+				) }
+				<div className="raffle-meta-group raffle-meta-type">
 					<a
 						href={ result.url }
 						target="_blank"
@@ -148,29 +133,6 @@ export default function RaffleResultCard( {
 						</span>
 					) }
 				</div>
-				{ publishedTime && (
-					<div
-						className="raffle-result-meta-details"
-						style={ {
-							position: 'absolute',
-							right: 0,
-							top: 0,
-							minWidth: 80,
-						} }
-					>
-						<span
-							className="raffle-meta-published-time"
-							style={ {
-								float: 'right',
-								marginRight: 0,
-								position: 'absolute',
-								right: 0,
-							} }
-						>
-							{ publishedTime }
-						</span>
-					</div>
-				) }
 			</div>
 		</li>
 	);
