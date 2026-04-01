@@ -102,3 +102,27 @@ add_action( 'wp_enqueue_scripts', function() {
 		);
 	}
 } );
+
+/**
+ * Output meta tag with article:tag for post/page tags if enabled.
+ */
+function raffle_search_output_article_tag_meta() {
+	if ( ! is_singular() ) {
+		return;
+	}
+	if ( ! get_option( 'raffle_search_enable_article_tag_meta', false ) ) {
+		return;
+	}
+	$tags = get_the_tags();
+	if ( $tags && is_array( $tags ) ) {
+		$tag_names = array();
+		foreach ( $tags as $tag ) {
+			$tag_names[] = $tag->name;
+		}
+		   if ( ! empty( $tag_names ) ) {
+			   $content = esc_attr( implode( ',', $tag_names ) );
+			   echo "<meta property=\"article:tag\" content=\"$content\" />\n";
+		   }
+	}
+}
+add_action( 'wp_head', 'raffle_search_output_article_tag_meta' );
