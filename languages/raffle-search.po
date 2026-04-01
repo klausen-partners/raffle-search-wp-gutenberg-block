@@ -62,10 +62,6 @@ msgid "Display the References list below the AI summary."
 msgstr "Display the References list below the AI summary."
 
 #: includes/admin.php
-msgid "Settings saved successfully."
-msgstr "Settings saved successfully."
-
-#: includes/admin.php
 msgid "Save Settings"
 msgstr "Save Settings"
 
