@@ -171,107 +171,130 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	// ── General tab ──────────────────────────────────────────────
 	add_settings_section(
-		'raffle_search_main_section',
+		'raffle_search_general_section',
 		__( 'API Configuration', 'raffle-search' ),
 		'raffle_search_section_description',
-		'raffle-search-settings'
+		'raffle-search-general'
 	);
-	
+
 	add_settings_field(
 		'raffle_search_base_url',
 		__( 'Base URL', 'raffle-search' ),
 		'raffle_search_field_base_url',
-		'raffle-search-settings',
-		'raffle_search_main_section'
+		'raffle-search-general',
+		'raffle_search_general_section'
 	);
-
 
 	add_settings_field(
 		'raffle_search_uid',
 		__( 'Search UID', 'raffle-search' ),
 		'raffle_search_field_search_uid',
-		'raffle-search-settings',
-		'raffle_search_main_section'
+		'raffle-search-general',
+		'raffle_search_general_section'
 	);
 
-	add_settings_field(
-		'raffle_search_show_references',
-		__( 'Show References', 'raffle-search' ),
-		'raffle_search_field_show_references',
-		'raffle-search-settings',
-		'raffle_search_main_section'
+	// ── Metadata tab ─────────────────────────────────────────────
+	add_settings_section(
+		'raffle_search_metadata_section',
+		'',
+		'raffle_search_metadata_section_description',
+		'raffle-search-metadata'
 	);
 
-	add_settings_field(
-		'raffle_search_hide_summary_button',
-		__( 'Hide summary button', 'raffle-search' ),
-		'raffle_search_field_hide_summary_button',
-		'raffle-search-settings',
-		'raffle_search_main_section'
-	);
-
-	add_settings_field(
-		'raffle_search_excerpt_trim_length',
-		__( 'Excerpt trim Length', 'raffle-search' ),
-		'raffle_search_field_excerpt_trim_length',
-		'raffle-search-settings',
-		'raffle_search_main_section'
-	);
-
-	add_settings_field(
-		'raffle_search_hide_excerpt_types',
-		__( 'Hide excerpts for Types', 'raffle-search' ),
-		'raffle_search_field_hide_excerpt_types',
-		'raffle-search-settings',
-		'raffle_search_main_section'
-	);
-
-	add_settings_field(
-		'raffle_search_default_image_url',
-		__( 'Default Result Image', 'raffle-search' ),
-		'raffle_search_field_default_image_url',
-		'raffle-search-settings',
-		'raffle_search_main_section'
-	);
-
-	add_settings_field(
-		'raffle_search_image_width',
-		__( 'Result Image Width', 'raffle-search' ),
-		'raffle_search_field_image_width',
-		'raffle-search-settings',
-		'raffle_search_main_section'
-	);
-
-	// Move this field to the end
 	add_settings_field(
 		'raffle_search_enable_article_tag_meta',
 		__( 'Add article:tag meta', 'raffle-search' ),
 		'raffle_search_field_enable_article_tag_meta',
-		'raffle-search-settings',
-		'raffle_search_main_section'
+		'raffle-search-metadata',
+		'raffle_search_metadata_section'
 	);
 
 	add_settings_field(
 		'raffle_search_enable_tags_on_pages',
 		__( 'Enable tags for pages', 'raffle-search' ),
 		'raffle_search_field_enable_tags_on_pages',
-		'raffle-search-settings',
-		'raffle_search_main_section'
+		'raffle-search-metadata',
+		'raffle_search_metadata_section'
+	);
+
+	// ── Settings tab ─────────────────────────────────────────────
+	add_settings_section(
+		'raffle_search_settings_section',
+		'',
+		'raffle_search_settings_section_description',
+		'raffle-search-vis-settings'
+	);
+
+	add_settings_field(
+		'raffle_search_show_references',
+		__( 'Show References', 'raffle-search' ),
+		'raffle_search_field_show_references',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
+	add_settings_field(
+		'raffle_search_hide_summary_button',
+		__( 'Hide summary button', 'raffle-search' ),
+		'raffle_search_field_hide_summary_button',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
+	add_settings_field(
+		'raffle_search_excerpt_trim_length',
+		__( 'Excerpt trim Length', 'raffle-search' ),
+		'raffle_search_field_excerpt_trim_length',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
+	add_settings_field(
+		'raffle_search_hide_excerpt_types',
+		__( 'Hide excerpts for Types', 'raffle-search' ),
+		'raffle_search_field_hide_excerpt_types',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
+	// ── Design tab ───────────────────────────────────────────────
+	add_settings_section(
+		'raffle_search_design_images_section',
+		__( 'Images', 'raffle-search' ),
+		'__return_false',
+		'raffle-search-design'
+	);
+
+	add_settings_field(
+		'raffle_search_default_image_url',
+		__( 'Default Result Image', 'raffle-search' ),
+		'raffle_search_field_default_image_url',
+		'raffle-search-design',
+		'raffle_search_design_images_section'
+	);
+
+	add_settings_field(
+		'raffle_search_image_width',
+		__( 'Result Image Width', 'raffle-search' ),
+		'raffle_search_field_image_width',
+		'raffle-search-design',
+		'raffle_search_design_images_section'
 	);
 
 	add_settings_section(
 		'raffle_search_badge_colors_section',
 		__( 'Badge Colors', 'raffle-search' ),
 		'raffle_search_badge_colors_section_description',
-		'raffle-search-settings'
+		'raffle-search-design'
 	);
 
 	add_settings_field(
 		'raffle_search_color_type',
 		__( 'Type badge', 'raffle-search' ),
 		'raffle_search_field_type_badge_colors',
-		'raffle-search-settings',
+		'raffle-search-design',
 		'raffle_search_badge_colors_section'
 	);
 
@@ -279,7 +302,7 @@ function raffle_search_register_settings() {
 		'raffle_search_color_tag',
 		__( 'Tag badge', 'raffle-search' ),
 		'raffle_search_field_tag_badge_colors',
-		'raffle-search-settings',
+		'raffle-search-design',
 		'raffle_search_badge_colors_section'
 	);
 // Field for enabling tags on pages
@@ -522,6 +545,26 @@ function raffle_search_section_description() {
 	echo '<p>' . esc_html__( 'Enter your Raffle AI credentials. Find these in the Raffle Web App under your API User Interface settings.', 'raffle-search' ) . '</p>';
 }
 
+function raffle_search_metadata_section_description() {
+	$img_url    = plugins_url( 'assets/metadata-sample.png', dirname( __FILE__ ) );
+	$ref_url    = 'https://docs.raffle.ai/api/guides/search-results-customization/metadata-selectors/';
+	$adv_url    = 'https://app.raffle.ai';
+	?>
+	<p><?php esc_html_e( 'Update WordPress meta-data that allows Raffle to improve the index. Note that changes will not affect the index until the next indexing schedule – usually within 1 day.', 'raffle-search' ); ?></p>
+	<p>
+		<?php esc_html_e( 'The following metadata attributes are supported:', 'raffle-search' ); ?>
+		<code>published_time</code>, <code>description</code>, <code>image</code>, <code>tag</code>
+	</p>
+	<p><?php esc_html_e( 'You need to add these items to your index under', 'raffle-search' ); ?> <strong><?php esc_html_e( 'Advanced settings', 'raffle-search' ); ?></strong>:</p>
+	<p><img src="<?php echo esc_url( $img_url ); ?>" alt="<?php esc_attr_e( 'Metadata sample screenshot', 'raffle-search' ); ?>" style="max-width:100%;height:auto;border:1px solid #ddd;border-radius:4px;" /></p>
+	<p><a href="<?php echo esc_url( $ref_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reference: Metadata Selectors – Raffle Docs', 'raffle-search' ); ?></a></p>
+	<?php
+}
+
+function raffle_search_settings_section_description() {
+	echo '<p>' . esc_html__( 'Modify the visibility and data structure of search results.', 'raffle-search' ) . '</p>';
+}
+
 function raffle_search_field_base_url() {
 	$value = get_option( 'raffle_search_base_url', 'https://api.raffle.ai/v2' );
 	?>
@@ -665,24 +708,102 @@ function raffle_search_render_settings_page() {
         <h1 style="margin: 0; padding: 0;"><?php echo esc_html( get_admin_page_title() ); ?></h1>
     </div>
 
+    <h2 class="nav-tab-wrapper" id="raffle-tab-nav">
+        <a href="#tab-general" class="nav-tab nav-tab-active" data-tab="tab-general"><?php esc_html_e( 'General', 'raffle-search' ); ?></a>
+        <a href="#tab-metadata" class="nav-tab" data-tab="tab-metadata"><?php esc_html_e( 'Metadata', 'raffle-search' ); ?></a>
+        <a href="#tab-settings" class="nav-tab" data-tab="tab-settings"><?php esc_html_e( 'Settings', 'raffle-search' ); ?></a>
+        <a href="#tab-design" class="nav-tab" data-tab="tab-design"><?php esc_html_e( 'Design', 'raffle-search' ); ?></a>
+        <a href="#tab-about" class="nav-tab" data-tab="tab-about"><?php esc_html_e( 'About', 'raffle-search' ); ?></a>
+    </h2>
+
     <form method="post" action="options.php">
-        <?php
-			settings_fields( 'raffle_search_options' );
-			do_settings_sections( 'raffle-search-settings' );
-			submit_button( __( 'Save Settings', 'raffle-search' ) );
-		?>
+        <?php settings_fields( 'raffle_search_options' ); ?>
+
+        <div id="tab-general" class="raffle-tab-panel">
+            <?php do_settings_sections( 'raffle-search-general' ); ?>
+        </div>
+
+        <div id="tab-metadata" class="raffle-tab-panel" style="display:none;">
+            <?php do_settings_sections( 'raffle-search-metadata' ); ?>
+        </div>
+
+        <div id="tab-settings" class="raffle-tab-panel" style="display:none;">
+            <?php do_settings_sections( 'raffle-search-vis-settings' ); ?>
+        </div>
+
+        <div id="tab-design" class="raffle-tab-panel" style="display:none;">
+            <?php do_settings_sections( 'raffle-search-design' ); ?>
+        </div>
+
+        <div id="tab-about" class="raffle-tab-panel" style="display:none;">
+            <h2><?php esc_html_e( 'About this plugin', 'raffle-search' ); ?></h2>
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Author', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><?php esc_html_e( 'This plugin is built and maintained by', 'raffle-search' ); ?>
+                        <a href="https://klausenogpartners.dk/" target="_blank" rel="noopener noreferrer">Klausen og Partners</a>.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Source code', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block" target="_blank" rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Feature requests &amp; bugs', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><?php esc_html_e( 'Found a bug or have a feature request? Please open an issue on GitHub:', 'raffle-search' ); ?><br>
+                        <a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues" target="_blank" rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Powered by Raffle', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><?php esc_html_e( 'Thanks to', 'raffle-search' ); ?>
+                        <a href="https://business.raffle.ai/" target="_blank" rel="noopener noreferrer">Raffle</a>
+                        <?php esc_html_e( 'for providing the', 'raffle-search' ); ?>
+                        <a href="https://docs.raffle.ai/api/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'API', 'raffle-search' ); ?></a>
+                        <?php esc_html_e( 'that was used to build this plugin.', 'raffle-search' ); ?></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <?php submit_button( __( 'Save Settings', 'raffle-search' ) ); ?>
     </form>
 
     <hr style="margin: 32px 0;" />
-    <div style="font-size: 13px; color: #666;">
-        <p>
-            <?php esc_html_e( 'This plugin is built and maintained by', 'raffle-search' ); ?>
-            <a href="https://klausenogpartners.dk" target="_blank" rel="noopener noreferrer">Klausen og Partners</a>.
-            <?php esc_html_e( 'The Raffle logo is owned by ', 'raffle-search' ); ?>
-            <a href="https://business.raffle.ai/about" target="_blank" rel="noopener noreferrer">Raffle</a>
-        </p>
-    </div>
 </div>
+
+<script>
+jQuery(function($) {
+	var storageKey = 'raffle_active_tab';
+
+	function activateTab( tabId, save ) {
+		$('.raffle-tab-panel').hide();
+		$('#raffle-tab-nav .nav-tab').removeClass('nav-tab-active');
+		$('#' + tabId).show();
+		$('#raffle-tab-nav [data-tab="' + tabId + '"]').addClass('nav-tab-active');
+		$('#submit').closest('.submit').toggle( tabId !== 'tab-about' );
+		if ( save ) {
+			try { localStorage.setItem( storageKey, tabId ); } catch(e) {}
+		}
+	}
+
+	var stored = '';
+	try { stored = localStorage.getItem( storageKey ) || ''; } catch(e) {}
+	if ( stored && $( '#' + stored ).length ) {
+		activateTab( stored, false );
+	}
+
+	$('#raffle-tab-nav .nav-tab').on('click', function(e) {
+		e.preventDefault();
+		activateTab( $( this ).data('tab'), true );
+	});
+});
+</script>
 
 <div id="raffle-color-overlay"
 	 style="display:none;position:fixed;z-index:100000;background:#fff;border:1px solid #c3c4c7;
