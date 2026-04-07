@@ -25,8 +25,9 @@ function setUrlParam( value ) {
 	window.history.replaceState( null, '', url.toString() );
 }
 export default function RaffleSearch( { searchUid } ) {
-	// --- Type filter state ---
+	// --- Type & tag filter state ---
 	const [ selectedType, setSelectedType ] = useState( null );
+	const [ selectedTag, setSelectedTag ] = useState( null );
 
 	// Fetch results FIRST so it's available for useMemo
 
@@ -59,18 +60,64 @@ export default function RaffleSearch( { searchUid } ) {
 			} ) );
 	}, [ results ] );
 
-	// Filtered results by type
-	const filteredResults = useMemo( () => {
-		if ( ! selectedType ) {
-			return results;
+	// Compute tag counts from results
+	const tagCounts = useMemo( () => {
+		if ( ! results || results.length === 0 ) {
+			return [];
 		}
-		const filtered = results.filter(
-			( r ) => getResultType( r ) === selectedType
-		);
-		// Debug: log filtered results
-		// console.log('Filtered results for', selectedType, filtered);
-		return filtered;
-	}, [ results, selectedType ] );
+		const counts = {};
+		results.forEach( ( r ) => {
+			if ( Array.isArray( r.metadata ) ) {
+				for ( const meta of r.metadata ) {
+					if ( meta.selector === 'tag' && meta.matches?.length ) {
+						const raw =
+							meta.matches[ 0 ].attr?.content ||
+							meta.matches[ 0 ].value ||
+							'';
+						raw.split( ',' )
+							.map( ( t ) => t.trim() )
+							.filter( Boolean )
+							.forEach( ( tag ) => {
+								counts[ tag ] = ( counts[ tag ] || 0 ) + 1;
+							} );
+					}
+				}
+			}
+		} );
+		return Object.entries( counts )
+			.sort( ( a, b ) => b[ 1 ] - a[ 1 ] )
+			.map( ( [ tag, count ] ) => ( { value: tag, label: tag, count } ) );
+	}, [ results ] );
+
+	// Filtered results by type and/or tag
+	const filteredResults = useMemo( () => {
+		return results.filter( ( r ) => {
+			if ( selectedType && getResultType( r ) !== selectedType ) {
+				return false;
+			}
+			if ( selectedTag ) {
+				let resultTags = [];
+				if ( Array.isArray( r.metadata ) ) {
+					for ( const meta of r.metadata ) {
+						if ( meta.selector === 'tag' && meta.matches?.length ) {
+							const raw =
+								meta.matches[ 0 ].attr?.content ||
+								meta.matches[ 0 ].value ||
+								'';
+							resultTags = raw
+								.split( ',' )
+								.map( ( t ) => t.trim() )
+								.filter( Boolean );
+						}
+					}
+				}
+				if ( ! resultTags.includes( selectedTag ) ) {
+					return false;
+				}
+			}
+			return true;
+		} );
+	}, [ results, selectedType, selectedTag ] );
 	const hideSummaryButton = window.raffleSettings?.hideSummaryButton;
 	const excerptTrimLength = window.raffleSettings?.excerptTrimLength;
 	let hideExcerptTypes = window.raffleSettings?.hideExcerptTypes || '';
@@ -183,6 +230,8 @@ export default function RaffleSearch( { searchUid } ) {
 			setUrlParam( q );
 			clearSuggestions();
 			setHasSearched( true );
+			setSelectedType( null );
+			setSelectedTag( null );
 			getSummary( q );
 			getResults( q );
 		},
@@ -367,6 +416,13 @@ export default function RaffleSearch( { searchUid } ) {
 								types={ typeCounts }
 								selectedType={ selectedType }
 								onSelectType={ setSelectedType }
+								tags={ tagCounts }
+								selectedTag={ selectedTag }
+								onSelectTag={ setSelectedTag }
+								onClear={ () => {
+									setSelectedType( null );
+									setSelectedTag( null );
+								} }
 							/>
 							<ul className="raffle-results-list">
 								{ filteredResults.map( ( result, i ) => (

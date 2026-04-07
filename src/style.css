@@ -50,10 +50,18 @@
 
 .raffle-filters-card {
 	display: flex;
-	align-items: center;
-	gap: 1.5rem;
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: flex-start;
 	margin-bottom: 1.2rem;
+}
+
+.raffle-filters-row {
+	display: flex;
+	align-items: flex-start;
 	flex-wrap: wrap;
+	flex-direction: column;
+	gap: 0.25rem;
 }
 
 .raffle-filters-label {
@@ -65,8 +73,9 @@
 	margin-right: 0.5em;
 }
 
-.raffle-filters-types {
+.raffle-filters {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 0.5rem;
 }
 
@@ -94,7 +103,11 @@
 .raffle-filter-type.is-active {
 }
 
-.raffle-filters-types.has-active .raffle-filter-type:not(.is-active) {
+.raffle-filters.has-active .raffle-filter-type:not(.is-active) {
+	opacity: 0.7;
+}
+
+.raffle-filters.has-active .raffle-filter-tag:not(.is-active) {
 	opacity: 0.7;
 }
 
@@ -112,6 +125,57 @@
 
 .raffle-filters-reset:hover {
 	color: #111;
+}
+
+.raffle-filter-type.raffle-filter-type--tag {
+	background: #d1fae5;
+	color: #047857;
+}
+
+.raffle-filter-type.raffle-filter-type--tag .raffle-filter-type-count {
+	background: #a7f3d0;
+	color: #047857;
+}
+
+.raffle-filter-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45em;
+	font-size: 0.93rem;
+	font-weight: 500;
+	padding: 0.2em 0.3em 0.2em 1em;
+	border-radius: 999px;
+	background: #d1fae5;
+	color: #047857;
+	border: none;
+	cursor: pointer;
+	transition:
+		background 0.15s,
+		color 0.15s,
+		box-shadow 0.15s;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+	outline: none;
+	position: relative;
+}
+
+.raffle-filter-tag.is-active {
+}
+
+.raffle-filter-tag-label {
+	margin-right: 0.3em;
+}
+
+.raffle-filter-tag-count {
+	background: #a7f3d0;
+	color: #047857;
+	font-size: 0.85em;
+	font-weight: 600;
+	border-radius: 999px;
+	padding: 0.1em 0.7em;
+	margin-left: 0.1em;
+	min-width: 1.7em;
+	text-align: center;
+	display: inline-block;
 }
 
 .raffle-filter-type-label {

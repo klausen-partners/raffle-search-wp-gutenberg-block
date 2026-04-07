@@ -478,7 +478,9 @@ function raffle_search_output_badge_color_styles() {
 		$rule = '';
 		if ( $tag_bg )   $rule .= 'background:' . esc_attr( $tag_bg ) . '!important;';
 		if ( $tag_text ) $rule .= 'color:' . esc_attr( $tag_text ) . '!important;';
-		$css .= '.raffle-meta-tag--tag{' . $rule . '}';
+		$css .= '.raffle-meta-tag--tag,.raffle-filter-tag,.raffle-filter-tag.is-active{' . $rule . '}';
+		if ( $tag_bg )   $css .= '.raffle-filter-tag-count{background:' . esc_attr( $tag_bg ) . '!important;}';
+		if ( $tag_text ) $css .= '.raffle-filter-tag-count{color:' . esc_attr( $tag_text ) . '!important;}';
 	}
 
 	if ( $css ) {
