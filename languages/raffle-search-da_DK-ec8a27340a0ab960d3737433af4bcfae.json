@@ -17,8 +17,12 @@
 			"Popular Questions": [ "Popul\u00e6re sp\u00f8rgsm\u00e5l" ],
 			"AI Summary": [ "AI-resum\u00e9" ],
 			"References": [ "Referencer" ],
-			"No summary available for this query.": [ "Intet resum\u00e9 tilg\u00e6ngeligt for denne s\u00f8gning." ],
-			"No results found for this query.": [ "Ingen resultater fundet for denne s\u00f8gning." ]
+			"No summary available for this query.": [
+				"Intet resum\u00e9 tilg\u00e6ngeligt for denne s\u00f8gning."
+			],
+			"No results found for this query.": [
+				"Ingen resultater fundet for denne s\u00f8gning."
+			]
 		}
 	}
 }

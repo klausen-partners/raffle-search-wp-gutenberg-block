@@ -2,6 +2,7 @@ import React from 'react';
 import { IconGlobe, IconPdf } from './icons';
 import { trimHtml } from '../utils/html';
 import { formatDate } from '../utils/date';
+import { getResultType, getResultTypeLabel } from '../utils/getResultType';
 
 // Default image URL injected by backend (see below)
 const DEFAULT_IMAGE_URL = window?.raffleSearchDefaultImageUrl || null;
@@ -21,10 +22,11 @@ export default function RaffleResultCard( {
 } ) {
 	// --- Extract metadata ---
 	let imageUrl = null;
-	let typeTag = null;
 	let publishedTime = null;
 	let description = null;
 	let tags = [];
+	const typeTag = getResultTypeLabel( getResultType( result ) );
+
 	if ( Array.isArray( result.metadata ) ) {
 		for ( const meta of result.metadata ) {
 			if ( meta.selector === 'image' && meta.matches?.length ) {
@@ -34,10 +36,6 @@ export default function RaffleResultCard( {
 				if ( imgMeta && imgMeta.attr?.content ) {
 					imageUrl = imgMeta.attr.content;
 				}
-			}
-			if ( meta.selector === 'type' && meta.matches?.length ) {
-				typeTag =
-					meta.matches[ 0 ].attr?.content || meta.matches[ 0 ].value;
 			}
 			if ( meta.selector === 'published_time' && meta.matches?.length ) {
 				const rawTime =

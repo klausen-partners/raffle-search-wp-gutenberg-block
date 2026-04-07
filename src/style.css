@@ -92,9 +92,26 @@
 }
 
 .raffle-filter-type.is-active {
-	background: #fde68a;
-	color: #92400e;
-	box-shadow: 0 2px 8px rgba(251, 191, 36, 0.13);
+}
+
+.raffle-filters-types.has-active .raffle-filter-type:not(.is-active) {
+	opacity: 0.7;
+}
+
+.raffle-filters-reset {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 0.88rem;
+	color: #6b7280;
+	padding: 0;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	transition: color 0.15s;
+}
+
+.raffle-filters-reset:hover {
+	color: #111;
 }
 
 .raffle-filter-type-label {
@@ -237,6 +254,7 @@
 	margin-bottom: 0.1rem;
 	line-height: 1.35;
 	display: inline-block;
+	width: 100%;
 }
 .raffle-result-link:hover {
 	text-decoration: underline;
@@ -250,25 +268,10 @@
 	justify-content: end;
 	grid-area: date;
 }
-
 .raffle-meta-group {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.25rem;
-}
-
-.raffle-meta-tag {
-	display: inline-block;
-	font-size: 0.78rem;
-	font-weight: 500;
-	padding: 0.13em 0.7em;
-	border-radius: 999px;
-	background: #f3f4f6;
-	color: #374151;
-	margin-right: 0.15em;
-	margin-bottom: 0.1em;
-	line-height: 1.5;
-	white-space: nowrap;
 }
 .raffle-meta-tag--section {
 	background: #e0e7ff;
@@ -611,6 +614,7 @@ input[type='search'].raffle-search-input::-webkit-search-cancel-button {
 	font-size: 0.9rem;
 	color: #4b5563;
 	line-height: 1.6;
+	width: 100%;
 }
 
 /* Raffle line-break placeholder */

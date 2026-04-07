@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import RaffleResultCard from './RaffleResultCard';
 import RaffleFiltersCard from './RaffleFiltersCard';
-import { getResultType } from '../utils/getResultType';
+import { getResultType, getResultTypeLabel } from '../utils/getResultType';
 import { __ } from '@wordpress/i18n';
 import {
 	fetchTopQuestions,
@@ -48,15 +48,15 @@ export default function RaffleSearch( { searchUid } ) {
 		const counts = {};
 		results.forEach( ( r ) => {
 			const type = getResultType( r );
-			if ( ! type ) {
-				return;
-			}
 			counts[ type ] = ( counts[ type ] || 0 ) + 1;
 		} );
-		return [
-			{ value: 'article', label: 'article', count: counts.article || 0 },
-			{ value: 'website', label: 'website', count: counts.website || 0 },
-		];
+		return [ 'news', 'document', 'page' ]
+			.filter( ( key ) => counts[ key ] > 0 )
+			.map( ( key ) => ( {
+				value: key,
+				label: getResultTypeLabel( key ),
+				count: counts[ key ],
+			} ) );
 	}, [ results ] );
 
 	// Filtered results by type
