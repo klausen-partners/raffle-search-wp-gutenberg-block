@@ -161,6 +161,16 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_image_width',
+		array(
+			'type'              => 'integer',
+			'sanitize_callback' => 'absint',
+			'default'           => 250,
+		)
+	);
+
 	add_settings_section(
 		'raffle_search_main_section',
 		__( 'API Configuration', 'raffle-search' ),
@@ -221,6 +231,14 @@ function raffle_search_register_settings() {
 		'raffle_search_default_image_url',
 		__( 'Default Result Image', 'raffle-search' ),
 		'raffle_search_field_default_image_url',
+		'raffle-search-settings',
+		'raffle_search_main_section'
+	);
+
+	add_settings_field(
+		'raffle_search_image_width',
+		__( 'Result Image Width', 'raffle-search' ),
+		'raffle_search_field_image_width',
 		'raffle-search-settings',
 		'raffle_search_main_section'
 	);
@@ -321,6 +339,17 @@ function raffle_search_field_hide_summary_button() {
         <?php checked( 1, $value ); ?> />
     <?php esc_html_e( 'Hide the "Learn More" button in the AI summary.', 'raffle-search' ); ?>
 </label>
+<?php
+}
+
+function raffle_search_field_image_width() {
+	$value = get_option( 'raffle_search_image_width', 250 );
+	?>
+<input type="number" id="raffle_search_image_width" name="raffle_search_image_width"
+    value="<?php echo esc_attr( $value ); ?>" class="small-text" min="0" max="600" step="10" />
+<p class="description">
+    <?php esc_html_e( 'Width of the result thumbnail image in pixels. Set to 0 to hide images entirely. Default: 250.', 'raffle-search' ); ?>
+</p>
 <?php
 }
 

@@ -72,6 +72,7 @@ function raffle_search_localize_view_script() {
 			'hideSummaryButton' => (bool) get_option( 'raffle_search_hide_summary_button', false ),
 			'hideExcerptTypes' => get_option( 'raffle_search_hide_excerpt_types', '' ),
 			'excerptTrimLength' => get_option( 'raffle_search_excerpt_trim_length', null ),
+			'imageWidth'       => (int) get_option( 'raffle_search_image_width', 250 ),
 		)
 	);
 
@@ -126,3 +127,14 @@ function raffle_search_output_article_tag_meta() {
 	}
 }
 add_action( 'wp_head', 'raffle_search_output_article_tag_meta' );
+
+/**
+ * Output CSS custom property for the result image width.
+ */
+function raffle_search_output_image_size_styles() {
+	$width = (int) get_option( 'raffle_search_image_width', 250 );
+	if ( $width > 0 ) {
+		echo '<style id="raffle-image-size">.raffle-result-meta-row{--raffle-image-width:' . esc_attr( $width ) . 'px}</style>' . "\n";
+	}
+}
+add_action( 'wp_head', 'raffle_search_output_image_size_styles' );

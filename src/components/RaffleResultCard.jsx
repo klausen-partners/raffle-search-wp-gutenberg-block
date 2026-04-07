@@ -26,6 +26,7 @@ export default function RaffleResultCard( {
 	let description = null;
 	let tags = [];
 	const typeTag = getResultTypeLabel( getResultType( result ) );
+	const imageWidth = window.raffleSettings?.imageWidth ?? 250;
 
 	if ( Array.isArray( result.metadata ) ) {
 		for ( const meta of result.metadata ) {
@@ -79,8 +80,15 @@ export default function RaffleResultCard( {
 
 	return (
 		<li className="raffle-result-card">
-			<div className="raffle-result-meta-row">
-				{ imageUrl && (
+			<div
+				className={
+					'raffle-result-meta-row' +
+					( imageWidth === 0
+						? ' raffle-result-meta-row--no-image'
+						: '' )
+				}
+			>
+				{ imageWidth !== 0 && imageUrl && (
 					<div className="raffle-result-image">
 						<img
 							src={ imageUrl }
