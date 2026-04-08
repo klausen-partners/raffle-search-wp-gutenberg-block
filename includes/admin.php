@@ -621,7 +621,7 @@ function raffle_search_section_description() {
 }
 
 function raffle_search_metadata_section_description() {
-	$img_url    = plugins_url( 'assets/metadata-sample.png', dirname( __FILE__ ) );
+	$img_url    = plugins_url( 'includes/assets/metadata-sample.png', dirname( __FILE__ ) );
 	$ref_url    = 'https://docs.raffle.ai/api/guides/search-results-customization/metadata-selectors/';
 	$adv_url    = 'https://app.raffle.ai';
 	?>

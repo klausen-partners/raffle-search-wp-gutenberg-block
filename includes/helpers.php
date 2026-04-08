@@ -15,5 +15,5 @@ function raffle_search_get_default_image_url() {
 		return $url;
 	}
 	// fallback to plugin asset
-	return plugins_url('assets/logo.svg', dirname(__FILE__, 2));
+	return plugins_url('includes/assets/logo.svg', dirname(__FILE__, 2));
 }
