@@ -134,6 +134,26 @@ function raffle_search_register_settings() {
 
 	register_setting(
 		'raffle_search_options',
+		'raffle_search_hidden_tags',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+			'default'           => '',
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_tags_mode',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'raffle_search_sanitize_tags_mode',
+			'default'           => 'exclude',
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
 		'raffle_search_color_type_bg',
 		array(
 			'type'              => 'string',
@@ -278,6 +298,14 @@ function raffle_search_register_settings() {
 		'raffle_search_settings_section'
 	);
 
+	add_settings_field(
+		'raffle_search_hidden_tags',
+		__( 'Hide Tags', 'raffle-search' ),
+		'raffle_search_field_hidden_tags',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
 	// ── Design tab ───────────────────────────────────────────────
 	add_settings_section(
 		'raffle_search_design_images_section',
@@ -385,6 +413,31 @@ function raffle_search_field_hide_excerpt_types() {
 </p>
 <?php
 }
+
+function raffle_search_sanitize_tags_mode( $value ) {
+	$allowed = array( 'exclude', 'include' );
+	return in_array( $value, $allowed, true ) ? $value : 'exclude';
+}
+
+function raffle_search_field_hidden_tags() {
+	$tags_value = get_option( 'raffle_search_hidden_tags', '' );
+	$mode_value = get_option( 'raffle_search_tags_mode', 'exclude' );
+	?>
+<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
+    <select id="raffle_search_tags_mode" name="raffle_search_tags_mode" style="height:30px;">
+        <option value="exclude" <?php selected( $mode_value, 'exclude' ); ?>>
+            <?php esc_html_e( 'Exclude', 'raffle-search' ); ?></option>
+        <option value="include" <?php selected( $mode_value, 'include' ); ?>>
+            <?php esc_html_e( 'Include only', 'raffle-search' ); ?></option>
+    </select>
+    <input type="text" id="raffle_search_hidden_tags" name="raffle_search_hidden_tags"
+        value="<?php echo esc_attr( $tags_value ); ?>" class="regular-text" placeholder="internal,draft" />
+</div>
+<p class="description">
+    <?php esc_html_e( 'Comma-separated list of tag names. "Exclude" hides these tags; "Include only" shows only these tags on result cards and tag filters.', 'raffle-search' ); ?>
+</p>
+<?php
+}
 function raffle_search_field_hide_summary_button() {
 	$value = get_option( 'raffle_search_hide_summary_button', false );
 	?>
@@ -487,46 +540,37 @@ function raffle_search_render_color_pair( $bg_id, $text_id, $bg_val, $text_val, 
 	$preview_bg   = $bg_val   ? $bg_val   : $default_bg;
 	$preview_text = $text_val ? $text_val : $default_text;
 	?>
-	<div class="raffle-color-pair" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
-		<div style="display:flex;flex-direction:column;gap:4px;">
-			<span style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Background', 'raffle-search' ); ?></span>
-			<button type="button"
-					class="raffle-swatch-trigger"
-					data-target="<?php echo esc_attr( $bg_id ); ?>"
-					data-preview="preview-<?php echo esc_attr( $bg_id ); ?>"
-					data-prop="background"
-					data-default="<?php echo esc_attr( $default_bg ); ?>"
-					style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_bg ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"
-			></button>
-			<input type="hidden"
-				   id="<?php echo esc_attr( $bg_id ); ?>"
-				   name="<?php echo esc_attr( $bg_id ); ?>"
-				   value="<?php echo esc_attr( $bg_val ); ?>" />
-		</div>
-		<div style="display:flex;flex-direction:column;gap:4px;">
-			<span style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Text', 'raffle-search' ); ?></span>
-			<button type="button"
-					class="raffle-swatch-trigger"
-					data-target="<?php echo esc_attr( $text_id ); ?>"
-					data-preview="preview-<?php echo esc_attr( $bg_id ); ?>"
-					data-prop="color"
-					data-default="<?php echo esc_attr( $default_text ); ?>"
-					style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_text ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"
-			></button>
-			<input type="hidden"
-				   id="<?php echo esc_attr( $text_id ); ?>"
-				   name="<?php echo esc_attr( $text_id ); ?>"
-				   value="<?php echo esc_attr( $text_val ); ?>" />
-		</div>
-		<div style="display:flex;flex-direction:column;gap:4px;">
-			<span style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Preview', 'raffle-search' ); ?></span>
-			<span id="preview-<?php echo esc_attr( $bg_id ); ?>"
-				  style="display:inline-flex;align-items:center;padding:.2em .85em;border-radius:999px;font-size:.85rem;font-weight:500;line-height:1.6;background:<?php echo esc_attr( $preview_bg ); ?>;color:<?php echo esc_attr( $preview_text ); ?>;">
-				<?php echo esc_html( $label ); ?>
-			</span>
-		</div>
-	</div>
-	<?php
+<div class="raffle-color-pair" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Background', 'raffle-search' ); ?></span>
+        <button type="button" class="raffle-swatch-trigger" data-target="<?php echo esc_attr( $bg_id ); ?>"
+            data-preview="preview-<?php echo esc_attr( $bg_id ); ?>" data-prop="background"
+            data-default="<?php echo esc_attr( $default_bg ); ?>"
+            style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_bg ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"></button>
+        <input type="hidden" id="<?php echo esc_attr( $bg_id ); ?>" name="<?php echo esc_attr( $bg_id ); ?>"
+            value="<?php echo esc_attr( $bg_val ); ?>" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Text', 'raffle-search' ); ?></span>
+        <button type="button" class="raffle-swatch-trigger" data-target="<?php echo esc_attr( $text_id ); ?>"
+            data-preview="preview-<?php echo esc_attr( $bg_id ); ?>" data-prop="color"
+            data-default="<?php echo esc_attr( $default_text ); ?>"
+            style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_text ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"></button>
+        <input type="hidden" id="<?php echo esc_attr( $text_id ); ?>" name="<?php echo esc_attr( $text_id ); ?>"
+            value="<?php echo esc_attr( $text_val ); ?>" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Preview', 'raffle-search' ); ?></span>
+        <span id="preview-<?php echo esc_attr( $bg_id ); ?>"
+            style="display:inline-flex;align-items:center;padding:.2em .85em;border-radius:999px;font-size:.85rem;font-weight:500;line-height:1.6;background:<?php echo esc_attr( $preview_bg ); ?>;color:<?php echo esc_attr( $preview_text ); ?>;">
+            <?php echo esc_html( $label ); ?>
+        </span>
+    </div>
+</div>
+<?php
 }
 }
 add_action( 'admin_init', 'raffle_search_register_settings' );
@@ -581,15 +625,22 @@ function raffle_search_metadata_section_description() {
 	$ref_url    = 'https://docs.raffle.ai/api/guides/search-results-customization/metadata-selectors/';
 	$adv_url    = 'https://app.raffle.ai';
 	?>
-	<p><?php esc_html_e( 'Update WordPress meta-data that allows Raffle to improve the index. Note that changes will not affect the index until the next indexing schedule – usually within 1 day.', 'raffle-search' ); ?></p>
-	<p>
-		<?php esc_html_e( 'The following metadata attributes are supported:', 'raffle-search' ); ?>
-		<code>published_time</code>, <code>description</code>, <code>image</code>, <code>tag</code>
-	</p>
-	<p><?php esc_html_e( 'You need to add these items to your index under', 'raffle-search' ); ?> <strong><?php esc_html_e( 'Advanced settings', 'raffle-search' ); ?></strong>:</p>
-	<p><img src="<?php echo esc_url( $img_url ); ?>" alt="<?php esc_attr_e( 'Metadata sample screenshot', 'raffle-search' ); ?>" style="max-width:100%;height:auto;border:1px solid #ddd;border-radius:4px;" /></p>
-	<p><a href="<?php echo esc_url( $ref_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Reference: Metadata Selectors – Raffle Docs', 'raffle-search' ); ?></a></p>
-	<?php
+<p><?php esc_html_e( 'Update WordPress meta-data that allows Raffle to improve the index. Note that changes will not affect the index until the next indexing schedule – usually within 1 day.', 'raffle-search' ); ?>
+</p>
+<p>
+    <?php esc_html_e( 'The following metadata attributes are supported:', 'raffle-search' ); ?>
+    <code>published_time</code>, <code>description</code>, <code>image</code>, <code>tag</code>
+</p>
+<p><?php esc_html_e( 'You need to add these items to your index under', 'raffle-search' ); ?>
+    <strong><?php esc_html_e( 'Advanced settings', 'raffle-search' ); ?></strong>:
+</p>
+<p><img src="<?php echo esc_url( $img_url ); ?>" width="700" alt="
+        <?php esc_attr_e( 'Metadata sample screenshot', 'raffle-search' ); ?>"
+        style="max-width:100%;height:auto;border:1px solid #ddd;border-radius:4px;" /></p>
+<p><a href="<?php echo esc_url( $ref_url ); ?>" target="_blank"
+        rel="noopener noreferrer"><?php esc_html_e( 'Reference: Metadata Selectors – Raffle Docs', 'raffle-search' ); ?></a>
+</p>
+<?php
 }
 
 function raffle_search_settings_section_description() {
@@ -740,10 +791,14 @@ function raffle_search_render_settings_page() {
     </div>
 
     <h2 class="nav-tab-wrapper" id="raffle-tab-nav">
-        <a href="#tab-general" class="nav-tab nav-tab-active" data-tab="tab-general"><?php esc_html_e( 'General', 'raffle-search' ); ?></a>
-        <a href="#tab-metadata" class="nav-tab" data-tab="tab-metadata"><?php esc_html_e( 'Metadata', 'raffle-search' ); ?></a>
-        <a href="#tab-settings" class="nav-tab" data-tab="tab-settings"><?php esc_html_e( 'Settings', 'raffle-search' ); ?></a>
-        <a href="#tab-design" class="nav-tab" data-tab="tab-design"><?php esc_html_e( 'Design', 'raffle-search' ); ?></a>
+        <a href="#tab-general" class="nav-tab nav-tab-active"
+            data-tab="tab-general"><?php esc_html_e( 'General', 'raffle-search' ); ?></a>
+        <a href="#tab-metadata" class="nav-tab"
+            data-tab="tab-metadata"><?php esc_html_e( 'Metadata', 'raffle-search' ); ?></a>
+        <a href="#tab-settings" class="nav-tab"
+            data-tab="tab-settings"><?php esc_html_e( 'Settings', 'raffle-search' ); ?></a>
+        <a href="#tab-design" class="nav-tab"
+            data-tab="tab-design"><?php esc_html_e( 'Design', 'raffle-search' ); ?></a>
         <a href="#tab-about" class="nav-tab" data-tab="tab-about"><?php esc_html_e( 'About', 'raffle-search' ); ?></a>
     </h2>
 
@@ -773,30 +828,40 @@ function raffle_search_render_settings_page() {
                     <th scope="row"><?php esc_html_e( 'Author', 'raffle-search' ); ?></th>
                     <td>
                         <p><?php esc_html_e( 'This plugin is built and maintained by', 'raffle-search' ); ?>
-                        <a href="https://klausenogpartners.dk/" target="_blank" rel="noopener noreferrer">Klausen og Partners</a>.</p>
+                            <a href="https://klausenogpartners.dk/" target="_blank" rel="noopener noreferrer">Klausen og
+                                Partners</a>.
+                        </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><?php esc_html_e( 'Source code', 'raffle-search' ); ?></th>
                     <td>
-                        <p><a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block" target="_blank" rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block</a></p>
+                        <p><a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block"
+                                target="_blank"
+                                rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block</a>
+                        </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><?php esc_html_e( 'Feature requests &amp; bugs', 'raffle-search' ); ?></th>
                     <td>
                         <p><?php esc_html_e( 'Found a bug or have a feature request? Please open an issue on GitHub:', 'raffle-search' ); ?><br>
-                        <a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues" target="_blank" rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues</a></p>
+                            <a href="https://github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues"
+                                target="_blank"
+                                rel="noopener noreferrer">github.com/klausen-partners/raffle-search-wp-gutenberg-block/issues</a>
+                        </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><?php esc_html_e( 'Powered by Raffle', 'raffle-search' ); ?></th>
                     <td>
                         <p><?php esc_html_e( 'Thanks to', 'raffle-search' ); ?>
-                        <a href="https://business.raffle.ai/" target="_blank" rel="noopener noreferrer">Raffle</a>
-                        <?php esc_html_e( 'for providing the', 'raffle-search' ); ?>
-                        <a href="https://docs.raffle.ai/api/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'API', 'raffle-search' ); ?></a>
-                        <?php esc_html_e( 'that was used to build this plugin.', 'raffle-search' ); ?></p>
+                            <a href="https://business.raffle.ai/" target="_blank" rel="noopener noreferrer">Raffle</a>
+                            <?php esc_html_e( 'for providing the', 'raffle-search' ); ?>
+                            <a href="https://docs.raffle.ai/api/" target="_blank"
+                                rel="noopener noreferrer"><?php esc_html_e( 'API', 'raffle-search' ); ?></a>
+                            <?php esc_html_e( 'that was used to build this plugin.', 'raffle-search' ); ?>
+                        </p>
                     </td>
                 </tr>
             </table>
@@ -810,187 +875,208 @@ function raffle_search_render_settings_page() {
 
 <script>
 jQuery(function($) {
-	var storageKey = 'raffle_active_tab';
+    var storageKey = 'raffle_active_tab';
 
-	function activateTab( tabId, save ) {
-		$('.raffle-tab-panel').hide();
-		$('#raffle-tab-nav .nav-tab').removeClass('nav-tab-active');
-		$('#' + tabId).show();
-		$('#raffle-tab-nav [data-tab="' + tabId + '"]').addClass('nav-tab-active');
-		$('#submit').closest('.submit').toggle( tabId !== 'tab-about' );
-		if ( save ) {
-			try { localStorage.setItem( storageKey, tabId ); } catch(e) {}
-		}
-	}
+    function activateTab(tabId, save) {
+        $('.raffle-tab-panel').hide();
+        $('#raffle-tab-nav .nav-tab').removeClass('nav-tab-active');
+        $('#' + tabId).show();
+        $('#raffle-tab-nav [data-tab="' + tabId + '"]').addClass('nav-tab-active');
+        $('#submit').closest('.submit').toggle(tabId !== 'tab-about');
+        if (save) {
+            try {
+                localStorage.setItem(storageKey, tabId);
+            } catch (e) {}
+        }
+    }
 
-	var stored = '';
-	try { stored = localStorage.getItem( storageKey ) || ''; } catch(e) {}
-	if ( stored && $( '#' + stored ).length ) {
-		activateTab( stored, false );
-	}
+    var stored = '';
+    try {
+        stored = localStorage.getItem(storageKey) || '';
+    } catch (e) {}
+    if (stored && $('#' + stored).length) {
+        activateTab(stored, false);
+    }
 
-	$('#raffle-tab-nav .nav-tab').on('click', function(e) {
-		e.preventDefault();
-		activateTab( $( this ).data('tab'), true );
-	});
+    $('#raffle-tab-nav .nav-tab').on('click', function(e) {
+        e.preventDefault();
+        activateTab($(this).data('tab'), true);
+    });
 });
 </script>
 
-<div id="raffle-color-overlay"
-	 style="display:none;position:fixed;z-index:100000;background:#fff;border:1px solid #c3c4c7;
+<div id="raffle-color-overlay" style="display:none;position:fixed;z-index:100000;background:#fff;border:1px solid #c3c4c7;
 		    border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:16px 18px 14px;min-width:240px;">
-	<button type="button" id="raffle-overlay-close"
-			style="position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;
+    <button type="button" id="raffle-overlay-close" style="position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;
 				   font-size:18px;line-height:1;color:#888;padding:2px 4px;"
-			aria-label="<?php esc_attr_e( 'Close', 'raffle-search' ); ?>">&times;</button>
+        aria-label="<?php esc_attr_e( 'Close', 'raffle-search' ); ?>">&times;</button>
 
-	<div id="raffle-overlay-swatches" style="display:none;margin-bottom:12px;">
-		<p style="margin:0 0 6px;font-size:.75rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;">
-			<?php esc_html_e( 'Theme Colors', 'raffle-search' ); ?>
-		</p>
-		<div id="raffle-overlay-swatches-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-		<hr style="margin:10px 0;border:none;border-top:1px solid #f0f0f0;">
-	</div>
+    <div id="raffle-overlay-swatches" style="display:none;margin-bottom:12px;">
+        <p
+            style="margin:0 0 6px;font-size:.75rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;">
+            <?php esc_html_e( 'Theme Colors', 'raffle-search' ); ?>
+        </p>
+        <div id="raffle-overlay-swatches-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <hr style="margin:10px 0;border:none;border-top:1px solid #f0f0f0;">
+    </div>
 
-	<div id="raffle-overlay-picker-wrap">
-		<input type="text" id="raffle-overlay-picker-input" />
-	</div>
+    <div id="raffle-overlay-picker-wrap">
+        <input type="text" id="raffle-overlay-picker-input" />
+    </div>
 
-	<div style="margin-top:8px;">
-		<button type="button" id="raffle-overlay-reset"
-				style="font-size:.8rem;color:#999;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;">
-			<?php esc_html_e( 'Reset to default', 'raffle-search' ); ?>
-		</button>
-	</div>
+    <div style="margin-top:8px;">
+        <button type="button" id="raffle-overlay-reset"
+            style="font-size:.8rem;color:#999;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;">
+            <?php esc_html_e( 'Reset to default', 'raffle-search' ); ?>
+        </button>
+    </div>
 </div>
 
 <script>
 jQuery(function($) {
-	var $overlay      = $('#raffle-color-overlay');
-	var $pickerInput  = $('#raffle-overlay-picker-input');
-	var currentTarget = null;
-	var currentProp   = null;
-	var currentPreview= null;
-	var currentDefault= null;
-	var $activeTrigger= null;
-	var pickerInited  = false;
+    var $overlay = $('#raffle-color-overlay');
+    var $pickerInput = $('#raffle-overlay-picker-input');
+    var currentTarget = null;
+    var currentProp = null;
+    var currentPreview = null;
+    var currentDefault = null;
+    var $activeTrigger = null;
+    var pickerInited = false;
 
-	<?php
+    <?php
 	$palette      = get_theme_support( 'editor-color-palette' );
 	$theme_colors = ( ! empty( $palette ) && is_array( $palette[0] ) ) ? $palette[0] : array();
 	echo 'var raffleThemeColors = ' . wp_json_encode( array_values( $theme_colors ) ) . ';';
 	?>
 
-	if ( raffleThemeColors.length ) {
-		var $list = $('#raffle-overlay-swatches-list');
-		$.each(raffleThemeColors, function(i, c) {
-			$list.append(
-				$('<button>').attr({
-					type: 'button',
-					title: c.name || c.color,
-					'data-color': c.color
-				}).css({
-					width: '26px', height: '26px', borderRadius: '50%',
-					background: c.color, border: '2px solid rgba(0,0,0,.12)',
-					cursor: 'pointer', padding: 0,
-					boxShadow: '0 1px 3px rgba(0,0,0,.1)', flexShrink: 0
-				})
-			);
-		});
-		$('#raffle-overlay-swatches').show();
-	}
+    if (raffleThemeColors.length) {
+        var $list = $('#raffle-overlay-swatches-list');
+        $.each(raffleThemeColors, function(i, c) {
+            $list.append(
+                $('<button>').attr({
+                    type: 'button',
+                    title: c.name || c.color,
+                    'data-color': c.color
+                }).css({
+                    width: '26px',
+                    height: '26px',
+                    borderRadius: '50%',
+                    background: c.color,
+                    border: '2px solid rgba(0,0,0,.12)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    boxShadow: '0 1px 3px rgba(0,0,0,.1)',
+                    flexShrink: 0
+                })
+            );
+        });
+        $('#raffle-overlay-swatches').show();
+    }
 
-	function initPicker() {
-		if ( pickerInited ) { return; }
-		$pickerInput.wpColorPicker({
-			change: function( event, ui ) {
-				applyColor( ui.color.toString() );
-			},
-			clear: function() {
-				applyColor( '' );
-			}
-		});
-		pickerInited = true;
-	}
+    function initPicker() {
+        if (pickerInited) {
+            return;
+        }
+        $pickerInput.wpColorPicker({
+            change: function(event, ui) {
+                applyColor(ui.color.toString());
+            },
+            clear: function() {
+                applyColor('');
+            }
+        });
+        pickerInited = true;
+    }
 
-	function applyColor( color ) {
-		if ( ! currentTarget ) { return; }
-		var display = color || currentDefault;
-		$('#' + currentTarget).val( color );
-		if ( $activeTrigger ) { $activeTrigger.css( 'background', display ); }
-		if ( currentPreview && currentProp ) {
-			$('#' + currentPreview).css( currentProp, display );
-		}
-	}
+    function applyColor(color) {
+        if (!currentTarget) {
+            return;
+        }
+        var display = color || currentDefault;
+        $('#' + currentTarget).val(color);
+        if ($activeTrigger) {
+            $activeTrigger.css('background', display);
+        }
+        if (currentPreview && currentProp) {
+            $('#' + currentPreview).css(currentProp, display);
+        }
+    }
 
-	function positionOverlay( $trigger ) {
-		var rect      = $trigger[0].getBoundingClientRect();
-		var top       = rect.bottom + 6;
-		var left      = rect.left;
-		var overlayW  = 260;
-		var overlayH  = 400;
-		if ( left + overlayW > window.innerWidth ) {
-			left = Math.max( 4, window.innerWidth - overlayW - 8 );
-		}
-		if ( top + overlayH > window.innerHeight ) {
-			top = Math.max( 4, rect.top - overlayH - 6 );
-		}
-		$overlay.css({ top: top + 'px', left: left + 'px' });
-	}
+    function positionOverlay($trigger) {
+        var rect = $trigger[0].getBoundingClientRect();
+        var top = rect.bottom + 6;
+        var left = rect.left;
+        var overlayW = 260;
+        var overlayH = 400;
+        if (left + overlayW > window.innerWidth) {
+            left = Math.max(4, window.innerWidth - overlayW - 8);
+        }
+        if (top + overlayH > window.innerHeight) {
+            top = Math.max(4, rect.top - overlayH - 6);
+        }
+        $overlay.css({
+            top: top + 'px',
+            left: left + 'px'
+        });
+    }
 
-	function openOverlay( $trigger ) {
-		currentTarget  = $trigger.data('target');
-		currentProp    = $trigger.data('prop');
-		currentPreview = $trigger.data('preview');
-		currentDefault = $trigger.data('default');
-		$activeTrigger = $trigger;
+    function openOverlay($trigger) {
+        currentTarget = $trigger.data('target');
+        currentProp = $trigger.data('prop');
+        currentPreview = $trigger.data('preview');
+        currentDefault = $trigger.data('default');
+        $activeTrigger = $trigger;
 
-		initPicker();
+        initPicker();
 
-		var current = $('#' + currentTarget).val() || currentDefault;
-		$pickerInput.wpColorPicker( 'color', current );
+        var current = $('#' + currentTarget).val() || currentDefault;
+        $pickerInput.wpColorPicker('color', current);
 
-		positionOverlay( $trigger );
-		$overlay.show();
-	}
+        positionOverlay($trigger);
+        $overlay.show();
+    }
 
-	$(document).on('click', '.raffle-swatch-trigger', function(e) {
-		e.stopPropagation();
-		var $t = $(this);
-		if ( $overlay.is(':visible') && currentTarget === $t.data('target') ) {
-			$overlay.hide();
-			return;
-		}
-		openOverlay( $t );
-	});
+    $(document).on('click', '.raffle-swatch-trigger', function(e) {
+        e.stopPropagation();
+        var $t = $(this);
+        if ($overlay.is(':visible') && currentTarget === $t.data('target')) {
+            $overlay.hide();
+            return;
+        }
+        openOverlay($t);
+    });
 
-	$overlay.on('click', '#raffle-overlay-swatches-list button', function(e) {
-		e.stopPropagation();
-		var color = $(this).data('color');
-		$pickerInput.wpColorPicker( 'color', color );
-		applyColor( color );
-	});
+    $overlay.on('click', '#raffle-overlay-swatches-list button', function(e) {
+        e.stopPropagation();
+        var color = $(this).data('color');
+        $pickerInput.wpColorPicker('color', color);
+        applyColor(color);
+    });
 
-	$('#raffle-overlay-close').on('click', function() {
-		$overlay.hide();
-	});
+    $('#raffle-overlay-close').on('click', function() {
+        $overlay.hide();
+    });
 
-	$('#raffle-overlay-reset').on('click', function() {
-		$('#' + currentTarget).val('');
-		$pickerInput.wpColorPicker( 'color', currentDefault || '' );
-		if ( $activeTrigger ) { $activeTrigger.css( 'background', currentDefault ); }
-		if ( currentPreview && currentProp ) {
-			$('#' + currentPreview).css( currentProp, currentDefault );
-		}
-	});
+    $('#raffle-overlay-reset').on('click', function() {
+        $('#' + currentTarget).val('');
+        $pickerInput.wpColorPicker('color', currentDefault || '');
+        if ($activeTrigger) {
+            $activeTrigger.css('background', currentDefault);
+        }
+        if (currentPreview && currentProp) {
+            $('#' + currentPreview).css(currentProp, currentDefault);
+        }
+    });
 
-	$overlay.on('click', function(e) {
-		e.stopPropagation();
-	});
+    $overlay.on('click', function(e) {
+        e.stopPropagation();
+    });
 
-	$(document).on('click', function() {
-		if ( $overlay.is(':visible') ) { $overlay.hide(); }
-	});
+    $(document).on('click', function() {
+        if ($overlay.is(':visible')) {
+            $overlay.hide();
+        }
+    });
 });
 </script>
 

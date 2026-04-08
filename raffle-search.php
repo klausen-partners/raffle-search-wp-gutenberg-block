@@ -73,6 +73,8 @@ function raffle_search_localize_view_script() {
 			'hideExcerptTypes' => get_option( 'raffle_search_hide_excerpt_types', '' ),
 			'excerptTrimLength' => get_option( 'raffle_search_excerpt_trim_length', null ),
 			'imageWidth'       => (int) get_option( 'raffle_search_image_width', 250 ),
+			'hiddenTags'       => get_option( 'raffle_search_hidden_tags', '' ),
+			'tagsMode'         => get_option( 'raffle_search_tags_mode', 'exclude' ),
 		)
 	);
 
