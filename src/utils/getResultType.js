@@ -1,13 +1,14 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * Returns a normalised type key for a result: 'news' | 'document' | 'page'.
+ * Returns a normalised type key for a result.
  *
  * - URL ending in .pdf → 'document'
- * - og:type / metadata / direct prop === 'article' → 'news'
+ * - raffle:type metadata present → its value (e.g. 'post', 'page', or CPT singular name)
+ * - Direct type property fallback
  * - Everything else → 'page'
  * @param {Object} result The search result object.
- * @return {'news'|'document'|'page'} Normalised type key.
+ * @return {string} Normalised type key.
  */
 export function getResultType( result ) {
 	// PDF files are always 'document'
@@ -18,7 +19,7 @@ export function getResultType( result ) {
 		}
 	}
 
-	// Check og:type from metadata
+	// Check raffle:type from metadata
 	if ( Array.isArray( result.metadata ) ) {
 		for ( const meta of result.metadata ) {
 			if ( meta.selector === 'type' && Array.isArray( meta.matches ) ) {
@@ -26,23 +27,11 @@ export function getResultType( result ) {
 					if (
 						match.tag === 'meta' &&
 						match.attr &&
-						( match.attr.property === 'og:type' ||
-							match.attr.name === 'og:type' ) &&
+						match.attr.property === 'raffle:type' &&
 						match.attr.content
 					) {
 						const val = match.attr.content.toLowerCase();
-						return val === 'article' ? 'news' : 'page';
-					}
-				}
-				// Fallback: any content in type selector
-				if ( meta.matches.length > 0 ) {
-					const fallback = (
-						meta.matches[ 0 ].attr?.content ||
-						meta.matches[ 0 ].value ||
-						''
-					).toLowerCase();
-					if ( fallback ) {
-						return fallback === 'article' ? 'news' : 'page';
+						return val === 'post' ? 'news' : val;
 					}
 				}
 			}
@@ -58,25 +47,28 @@ export function getResultType( result ) {
 		''
 	).toLowerCase();
 	if ( direct ) {
-		return direct === 'article' ? 'news' : 'page';
+		return direct === 'post' ? 'news' : direct;
 	}
 
 	return 'page';
 }
 
 /**
- * Returns the translated display label for a normalised type key.
+ * Returns the translated display label for a type key.
  *
- * @param {'news'|'document'|'page'} type Normalised type key.
- * @return {string} Translated display label.
+ * @param {string} type Type key (e.g. 'post', 'page', 'document', 'news', or a CPT slug).
+ * @return {string} Translated or capitalised display label.
  */
 export function getResultTypeLabel( type ) {
 	switch ( type ) {
-		case 'news':
-			return __( 'News', 'raffle-search' );
+		case 'page':
+			return __( 'Page', 'raffle-search' );
 		case 'document':
 			return __( 'Document', 'raffle-search' );
+		case 'news':
+			return __( 'News', 'raffle-search' );
 		default:
-			return __( 'Page', 'raffle-search' );
+			// For custom post types: capitalise the first letter.
+			return type.charAt( 0 ).toUpperCase() + type.slice( 1 );
 	}
 }

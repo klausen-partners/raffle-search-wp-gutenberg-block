@@ -129,6 +129,29 @@ function raffle_search_output_article_tag_meta() {
 add_action( 'wp_head', 'raffle_search_output_article_tag_meta' );
 
 /**
+ * Output raffle:type meta tag for posts/pages/CPTs if enabled.
+ */
+function raffle_search_output_raffle_type_meta() {
+	if ( ! is_singular() ) {
+		return;
+	}
+	if ( ! get_option( 'raffle_search_enable_raffle_type_meta', false ) ) {
+		return;
+	}
+	$post_type = get_post_type( get_the_ID() );
+	if ( 'post' === $post_type ) {
+		$type_value = 'post';
+	} elseif ( 'page' === $post_type ) {
+		$type_value = 'page';
+	} else {
+		$obj        = get_post_type_object( $post_type );
+		$type_value = $obj ? strtolower( $obj->labels->singular_name ) : $post_type;
+	}
+	echo '<meta property="raffle:type" content="' . esc_attr( $type_value ) . '" />' . "\n";
+}
+add_action( 'wp_head', 'raffle_search_output_raffle_type_meta' );
+
+/**
  * Output CSS custom property for the result image width.
  */
 function raffle_search_output_image_size_styles() {

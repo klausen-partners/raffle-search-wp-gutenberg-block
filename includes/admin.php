@@ -51,6 +51,17 @@ function raffle_search_register_settings() {
 		)
 	);
 
+	// Register option to enable raffle:type meta tag output
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_enable_raffle_type_meta',
+		array(
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'default'           => false,
+		)
+	);
+
 	// Register default image URL option
 	register_setting(
 		'raffle_search_options',
@@ -212,6 +223,14 @@ function raffle_search_register_settings() {
 	);
 
 	add_settings_field(
+		'raffle_search_enable_raffle_type_meta',
+		__( 'Add raffle:type meta', 'raffle-search' ),
+		'raffle_search_field_enable_raffle_type_meta',
+		'raffle-search-metadata',
+		'raffle_search_metadata_section'
+	);
+
+	add_settings_field(
 		'raffle_search_enable_tags_on_pages',
 		__( 'Enable tags for pages', 'raffle-search' ),
 		'raffle_search_field_enable_tags_on_pages',
@@ -340,6 +359,18 @@ add_action( 'save_post_page', function( $post_id ) {
     <input type="checkbox" id="raffle_search_enable_article_tag_meta" name="raffle_search_enable_article_tag_meta"
         value="1" <?php checked( 1, $value ); ?> />
     <?php esc_html_e( 'Add a meta tag with all post/page tags as a string array (article:tag) in the page head.', 'raffle-search' ); ?>
+</label>
+<?php
+}
+
+// Field for enabling raffle:type meta
+function raffle_search_field_enable_raffle_type_meta() {
+	$value = get_option( 'raffle_search_enable_raffle_type_meta', false );
+	?>
+<label for="raffle_search_enable_raffle_type_meta">
+    <input type="checkbox" id="raffle_search_enable_raffle_type_meta" name="raffle_search_enable_raffle_type_meta"
+        value="1" <?php checked( 1, $value ); ?> />
+    <?php esc_html_e( 'Add a raffle:type meta tag identifying the content type (post, page, or custom post type singular name) in the page head.', 'raffle-search' ); ?>
 </label>
 <?php
 }
