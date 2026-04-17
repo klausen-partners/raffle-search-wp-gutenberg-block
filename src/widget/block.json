@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "raffle-search/widget",
+	"version": "1.0.0",
+	"title": "Raffle Search Widget",
+	"category": "widgets",
+	"icon": "search",
+	"description": "A search widget that shows a magnifier icon and links to a search page or opens the Raffle Search overlay.",
+	"keywords": [ "raffle", "search", "widget", "magnifier" ],
+	"textdomain": "raffle-search",
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style-view.css",
+	"editorStyle": "file:./index.css",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"mode": {
+			"type": "string",
+			"default": "overlay"
+		},
+		"searchPageUrl": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

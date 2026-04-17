@@ -18,7 +18,36 @@ A WordPress Gutenberg block that integrates [Raffle](https://raffle.ai) search i
 
 ## Usage
 
-Insert the **Raffle Search** block from the Gutenberg block inserter (category: Widgets). The block supports wide and full alignment.
+### Gutenberg blocks
+
+Insert the **Raffle Search** or **Raffle Search Widget** blocks from the Gutenberg block inserter (category: Widgets). The search block supports wide and full alignment.
+
+### Shortcodes
+
+You can also embed the blocks via shortcodes — useful in classic editor pages, widgets, or PHP templates.
+
+**Raffle Search** — renders the full search experience:
+
+```
+[raffle_search]
+[raffle_search uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+```
+
+| Attribute | Default   | Description                                      |
+| --------- | --------- | ------------------------------------------------ |
+| `uid`     | _(empty)_ | Override the global Search UID for this instance |
+
+**Raffle Search Widget** — renders a magnifier icon button:
+
+```
+[raffle_search_widget]
+[raffle_search_widget mode="link" url="https://example.com/search"]
+```
+
+| Attribute | Default   | Description                                                      |
+| --------- | --------- | ---------------------------------------------------------------- |
+| `mode`    | `overlay` | `overlay` opens the search in a modal; `link` navigates to a URL |
+| `url`     | _(empty)_ | Target URL when `mode="link"`                                    |
 
 ## Development
 

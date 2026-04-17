@@ -799,6 +799,8 @@ function raffle_search_render_settings_page() {
             data-tab="tab-settings"><?php esc_html_e( 'Settings', 'raffle-search' ); ?></a>
         <a href="#tab-design" class="nav-tab"
             data-tab="tab-design"><?php esc_html_e( 'Design', 'raffle-search' ); ?></a>
+        <a href="#tab-shortcodes" class="nav-tab"
+            data-tab="tab-shortcodes"><?php esc_html_e( 'Shortcodes', 'raffle-search' ); ?></a>
         <a href="#tab-about" class="nav-tab" data-tab="tab-about"><?php esc_html_e( 'About', 'raffle-search' ); ?></a>
     </h2>
 
@@ -819,6 +821,57 @@ function raffle_search_render_settings_page() {
 
         <div id="tab-design" class="raffle-tab-panel" style="display:none;">
             <?php do_settings_sections( 'raffle-search-design' ); ?>
+        </div>
+
+        <div id="tab-shortcodes" class="raffle-tab-panel" style="display:none;">
+            <h2><?php esc_html_e( 'Shortcodes', 'raffle-search' ); ?></h2>
+            <p><?php esc_html_e( 'You can use shortcodes to embed the Raffle Search blocks in templates, widgets, or any content area that does not support Gutenberg blocks.', 'raffle-search' ); ?>
+            </p>
+
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Raffle Search', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><?php esc_html_e( 'Renders the full Raffle Search experience.', 'raffle-search' ); ?></p>
+                        <code>[raffle_search]</code>
+                        <p class="description" style="margin-top:8px;">
+                            <?php esc_html_e( 'Optional attribute:', 'raffle-search' ); ?>
+                            <code>uid</code> &mdash;
+                            <?php esc_html_e( 'Override the global Search UID for this instance.', 'raffle-search' ); ?>
+                        </p>
+                        <p style="margin-top:4px;">
+                            <?php esc_html_e( 'Example:', 'raffle-search' ); ?>
+                            <code>[raffle_search uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]</code>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Raffle Search Widget', 'raffle-search' ); ?></th>
+                    <td>
+                        <p><?php esc_html_e( 'Renders a magnifier icon that opens the search overlay or links to a search page.', 'raffle-search' ); ?>
+                        </p>
+                        <code>[raffle_search_widget]</code>
+                        <p class="description" style="margin-top:8px;">
+                            <?php esc_html_e( 'Optional attributes:', 'raffle-search' ); ?>
+                        </p>
+                        <ul style="margin-top:4px;list-style:disc;padding-left:20px;">
+                            <li>
+                                <code>mode</code> &mdash;
+                                <?php esc_html_e( '"overlay" (default) or "link".', 'raffle-search' ); ?>
+                            </li>
+                            <li>
+                                <code>url</code> &mdash;
+                                <?php esc_html_e( 'The search page URL (used when mode="link").', 'raffle-search' ); ?>
+                            </li>
+                        </ul>
+                        <p style="margin-top:4px;">
+                            <?php esc_html_e( 'Examples:', 'raffle-search' ); ?><br>
+                            <code>[raffle_search_widget]</code><br>
+                            <code>[raffle_search_widget mode="link" url="https://example.com/search"]</code>
+                        </p>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <div id="tab-about" class="raffle-tab-panel" style="display:none;">
