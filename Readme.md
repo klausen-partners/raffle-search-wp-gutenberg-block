@@ -49,6 +49,52 @@ You can also embed the blocks via shortcodes — useful in classic editor pages,
 | `mode`    | `overlay` | `overlay` opens the search in a modal; `link` navigates to a URL |
 | `url`     | _(empty)_ | Target URL when `mode="link"`                                    |
 
+## Settings
+
+The settings page (**Settings > Raffle Search**) is organised into tabs:
+
+### General
+
+| Setting        | Default                    | Description                                  |
+| -------------- | -------------------------- | -------------------------------------------- |
+| **Base URL**   | `https://api.raffle.ai/v2` | Raffle API base URL                          |
+| **Search UID** | _(empty)_                  | The UID of your published Raffle Search Tool |
+
+### Metadata
+
+Controls which `<meta>` tags the plugin outputs in the `<head>` of posts and pages.
+
+| Setting                   | Default | Description                                                                 |
+| ------------------------- | ------- | --------------------------------------------------------------------------- |
+| **Add article:tag meta**  | Off     | Output `<meta property="article:tag">` tags from post/page taxonomy terms   |
+| **Add raffle:type meta**  | Off     | Output `<meta property="raffle:type">` with the post type (page, post, CPT) |
+| **Enable tags for pages** | Off     | Register the `post_tag` taxonomy for pages so tags can be assigned to them  |
+
+### Settings
+
+Controls search result display and filtering.
+
+| Setting                     | Default   | Description                                                                                                |
+| --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| **Show References**         | On        | Show reference links below AI summaries                                                                    |
+| **Hide summary button**     | Off       | Remove the "AI Summary" button from the search UI                                                          |
+| **Excerpt trim length**     | _(none)_  | Maximum character length for result excerpts (leave empty for full length)                                 |
+| **Hide excerpts for types** | `pdf`     | Comma-separated list of type slugs whose excerpts should be hidden                                         |
+| **Hide Tags**               | _(empty)_ | Exclude or include specific tags from the tag filter bar and result badges (comma-separated list + mode)   |
+| **Filter Types**            | _(empty)_ | Exclude or include specific types from the type filter bar and result badges (comma-separated list + mode) |
+
+### Design
+
+Customise the visual appearance of search results and the widget.
+
+| Setting                  | Default   | Description                                                            |
+| ------------------------ | --------- | ---------------------------------------------------------------------- |
+| **Default Result Image** | _(empty)_ | Fallback image URL when a result has no thumbnail                      |
+| **Result Image Width**   | `250`     | Width in pixels for result thumbnails                                  |
+| **Type badge colors**    | _(theme)_ | Background and text colour for the type badge                          |
+| **Tag badge colors**     | _(theme)_ | Background and text colour for the tag badge                           |
+| **Widget Icon Color**    | `#333`    | Icon colour for the search widget (desktop and mobile, set separately) |
+
 ## Development
 
 Install dependencies:
@@ -70,20 +116,37 @@ npm install
 
 ```
 raffle-search/
-├── src/                  # Source files
-│   ├── index.js          # Block registration (editor entry point)
-│   ├── edit.js           # Block editor component
-│   ├── view.js           # Frontend entry point
-│   ├── block.json        # Block metadata
-│   ├── style.css         # Frontend styles
-│   ├── editor.css        # Editor-only styles
-│   ├── api/              # Raffle AI API helpers
-│   └── components/
-│       └── RaffleSearch.jsx  # Main search component
-├── build/                # Compiled output (committed for distribution)
+├── src/                      # Source files
+│   ├── index.js              # Block registration (editor entry point)
+│   ├── edit.js               # Block editor component
+│   ├── view.js               # Frontend entry point
+│   ├── block.json            # Block metadata
+│   ├── style.css             # Frontend styles
+│   ├── editor.css            # Editor-only styles
+│   ├── api/                  # Raffle AI API helpers
+│   ├── components/
+│   │   ├── RaffleSearch.jsx      # Main search component
+│   │   ├── RaffleResultCard.jsx  # Individual result card
+│   │   ├── RaffleFiltersCard.jsx # Type & tag filter bar
+│   │   ├── Spinner.jsx           # Loading spinner
+│   │   └── icons/                # SVG icon components
+│   ├── hooks/                # Custom React hooks (e.g. useDebounce)
+│   ├── types/                # Result type definitions
+│   ├── utils/                # Utility helpers (date, html, getResultType)
+│   └── widget/               # Raffle Search Widget block
+│       ├── block.json
+│       ├── index.js
+│       ├── edit.js
+│       ├── view.js
+│       ├── style.css
+│       └── editor.css
+├── build/                    # Compiled output (committed for distribution)
 ├── includes/
-│   └── admin.php         # Plugin settings page
-└── raffle-search.php     # Plugin entry point
+│   ├── admin.php             # Plugin settings page
+│   ├── advanced-settings.php # Metadata output helpers
+│   └── helpers.php           # Shared PHP helpers
+├── languages/                # Translation files (.pot, .po, .mo, .json)
+└── raffle-search.php         # Plugin entry point
 ```
 
 ### Tech stack

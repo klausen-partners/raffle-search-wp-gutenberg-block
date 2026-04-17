@@ -84,6 +84,8 @@ function raffle_search_localize_view_script() {
 			'imageWidth'       => (int) get_option( 'raffle_search_image_width', 250 ),
 			'hiddenTags'       => get_option( 'raffle_search_hidden_tags', '' ),
 			'tagsMode'         => get_option( 'raffle_search_tags_mode', 'exclude' ),
+			'hiddenTypes'      => get_option( 'raffle_search_hidden_types', '' ),
+			'typesMode'        => get_option( 'raffle_search_types_mode', 'exclude' ),
 		)
 	);
 
@@ -104,6 +106,8 @@ function raffle_search_localize_view_script() {
 			'imageWidth'       => (int) get_option( 'raffle_search_image_width', 250 ),
 			'hiddenTags'       => get_option( 'raffle_search_hidden_tags', '' ),
 			'tagsMode'         => get_option( 'raffle_search_tags_mode', 'exclude' ),
+			'hiddenTypes'      => get_option( 'raffle_search_hidden_types', '' ),
+			'typesMode'        => get_option( 'raffle_search_types_mode', 'exclude' ),
 		)
 	);
 	wp_set_script_translations( $widget_handle, 'raffle-search', RAFFLE_SEARCH_DIR . 'languages' );
@@ -206,6 +210,8 @@ function raffle_search_get_settings_array() {
 		'imageWidth'        => (int) get_option( 'raffle_search_image_width', 250 ),
 		'hiddenTags'        => get_option( 'raffle_search_hidden_tags', '' ),
 		'tagsMode'          => get_option( 'raffle_search_tags_mode', 'exclude' ),
+		'hiddenTypes'       => get_option( 'raffle_search_hidden_types', '' ),
+		'typesMode'         => get_option( 'raffle_search_types_mode', 'exclude' ),
 	);
 }
 
@@ -285,8 +291,8 @@ function raffle_search_widget_shortcode( $atts ) {
 	return '<div class="raffle-search-widget" data-mode="' . esc_attr( $mode ) . '"' . $url_attr . '>'
 		. '<button class="raffle-search-widget__trigger" aria-label="Search" type="button">'
 		. '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Search">'
-		. '<circle cx="11" cy="11" r="7" stroke="#333" stroke-width="2" fill="none"></circle>'
-		. '<line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#333" stroke-width="2" stroke-linecap="round"></line>'
+		. '<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"></circle>'
+		. '<line x1="16.5" y1="16.5" x2="22" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>'
 		. '</svg>'
 		. '</button>'
 		. '</div>';

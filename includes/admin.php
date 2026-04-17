@@ -154,6 +154,26 @@ function raffle_search_register_settings() {
 
 	register_setting(
 		'raffle_search_options',
+		'raffle_search_hidden_types',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+			'default'           => '',
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_types_mode',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'raffle_search_sanitize_types_mode',
+			'default'           => 'exclude',
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
 		'raffle_search_color_type_bg',
 		array(
 			'type'              => 'string',
@@ -199,6 +219,26 @@ function raffle_search_register_settings() {
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',
 			'default'           => 250,
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_widget_icon_color',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_hex_color',
+			'default'           => '',
+		)
+	);
+
+	register_setting(
+		'raffle_search_options',
+		'raffle_search_widget_icon_color_mobile',
+		array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_hex_color',
+			'default'           => '',
 		)
 	);
 
@@ -299,8 +339,16 @@ function raffle_search_register_settings() {
 	);
 
 	add_settings_field(
+		'raffle_search_hidden_types',
+		__( 'Filter Types', 'raffle-search' ),
+		'raffle_search_field_hidden_types',
+		'raffle-search-vis-settings',
+		'raffle_search_settings_section'
+	);
+
+	add_settings_field(
 		'raffle_search_hidden_tags',
-		__( 'Hide Tags', 'raffle-search' ),
+		__( 'Filter Tags', 'raffle-search' ),
 		'raffle_search_field_hidden_tags',
 		'raffle-search-vis-settings',
 		'raffle_search_settings_section'
@@ -351,6 +399,22 @@ function raffle_search_register_settings() {
 		'raffle_search_field_tag_badge_colors',
 		'raffle-search-design',
 		'raffle_search_badge_colors_section'
+	);
+
+	// ── Design tab: Widget Icon section ─────────────────────────
+	add_settings_section(
+		'raffle_search_widget_icon_section',
+		__( 'Widget Icon', 'raffle-search' ),
+		'raffle_search_widget_icon_section_description',
+		'raffle-search-design'
+	);
+
+	add_settings_field(
+		'raffle_search_widget_icon_color',
+		__( 'Icon Color', 'raffle-search' ),
+		'raffle_search_field_widget_icon_color',
+		'raffle-search-design',
+		'raffle_search_widget_icon_section'
 	);
 // Field for enabling tags on pages
 function raffle_search_field_enable_tags_on_pages() {
@@ -417,6 +481,31 @@ function raffle_search_field_hide_excerpt_types() {
 function raffle_search_sanitize_tags_mode( $value ) {
 	$allowed = array( 'exclude', 'include' );
 	return in_array( $value, $allowed, true ) ? $value : 'exclude';
+}
+
+function raffle_search_sanitize_types_mode( $value ) {
+	$allowed = array( 'exclude', 'include' );
+	return in_array( $value, $allowed, true ) ? $value : 'exclude';
+}
+
+function raffle_search_field_hidden_types() {
+	$types_value = get_option( 'raffle_search_hidden_types', '' );
+	$mode_value  = get_option( 'raffle_search_types_mode', 'exclude' );
+	?>
+<div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
+    <select id="raffle_search_types_mode" name="raffle_search_types_mode" style="height:30px;">
+        <option value="exclude" <?php selected( $mode_value, 'exclude' ); ?>>
+            <?php esc_html_e( 'Exclude', 'raffle-search' ); ?></option>
+        <option value="include" <?php selected( $mode_value, 'include' ); ?>>
+            <?php esc_html_e( 'Include only', 'raffle-search' ); ?></option>
+    </select>
+    <input type="text" id="raffle_search_hidden_types" name="raffle_search_hidden_types"
+        value="<?php echo esc_attr( $types_value ); ?>" class="regular-text" placeholder="news,document,page" />
+</div>
+<p class="description">
+    <?php esc_html_e( 'Comma-separated list of type names (news, document, page). "Exclude" hides these types from result cards and type filters; "Include only" shows only these types.', 'raffle-search' ); ?>
+</p>
+<?php
 }
 
 function raffle_search_field_hidden_tags() {
@@ -536,6 +625,68 @@ function raffle_search_field_tag_badge_colors() {
 	);
 }
 
+function raffle_search_widget_icon_section_description() {
+	echo '<p>' . esc_html__( 'Customise the magnifier icon colour in the Raffle Search Widget. Set a mobile colour to override on small screens; leave it blank to inherit the desktop colour.', 'raffle-search' ) . '</p>';
+}
+
+function raffle_search_field_widget_icon_color() {
+	$desktop = get_option( 'raffle_search_widget_icon_color', '' );
+	$mobile  = get_option( 'raffle_search_widget_icon_color_mobile', '' );
+	$default = '#333333';
+	$preview_desktop = $desktop ? $desktop : $default;
+	$preview_mobile  = $mobile ? $mobile : $preview_desktop;
+	?>
+<div style="display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Desktop', 'raffle-search' ); ?></span>
+        <button type="button" class="raffle-swatch-trigger" data-target="raffle_search_widget_icon_color"
+            data-preview="raffle-widget-icon-preview" data-prop="color"
+            data-default="<?php echo esc_attr( $default ); ?>"
+            style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_desktop ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"></button>
+        <input type="hidden" id="raffle_search_widget_icon_color" name="raffle_search_widget_icon_color"
+            value="<?php echo esc_attr( $desktop ); ?>" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Mobile', 'raffle-search' ); ?></span>
+        <button type="button" class="raffle-swatch-trigger" data-target="raffle_search_widget_icon_color_mobile"
+            data-preview="raffle-widget-icon-preview-mobile" data-prop="color"
+            data-default="<?php echo esc_attr( $default ); ?>"
+            style="width:36px;height:36px;border-radius:6px;border:2px solid rgba(0,0,0,.2);background:<?php echo esc_attr( $preview_mobile ); ?>;cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.08);"></button>
+        <input type="hidden" id="raffle_search_widget_icon_color_mobile" name="raffle_search_widget_icon_color_mobile"
+            value="<?php echo esc_attr( $mobile ); ?>" />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+        <span
+            style="font-size:.82rem;font-weight:600;color:#555;"><?php esc_html_e( 'Preview', 'raffle-search' ); ?></span>
+        <div style="display:flex;gap:12px;align-items:center;">
+            <span id="raffle-widget-icon-preview" style="color:<?php echo esc_attr( $preview_desktop ); ?>;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
+                    <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" />
+                </svg>
+            </span>
+            <span id="raffle-widget-icon-preview-mobile"
+                style="color:<?php echo esc_attr( $preview_mobile ); ?>;font-size:.75rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
+                    <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" />
+                </svg>
+                <span
+                    style="display:block;font-size:.7rem;color:#888;margin-top:2px;"><?php esc_html_e( '(mobile)', 'raffle-search' ); ?></span>
+            </span>
+        </div>
+    </div>
+</div>
+<p class="description" style="margin-top:8px;">
+    <?php esc_html_e( 'Leave blank to use the default (#333). If no mobile colour is set, the desktop colour is used on all screen sizes.', 'raffle-search' ); ?>
+</p>
+<?php
+}
+
 function raffle_search_render_color_pair( $bg_id, $text_id, $bg_val, $text_val, $default_bg, $default_text, $label ) {
 	$preview_bg   = $bg_val   ? $bg_val   : $default_bg;
 	$preview_text = $text_val ? $text_val : $default_text;
@@ -612,6 +763,32 @@ function raffle_search_output_badge_color_styles() {
 
 	if ( $css ) {
 		echo '<style id="raffle-badge-colors">' . $css . '</style>' . "\n";
+	}
+
+	// Widget icon colour.
+	$icon_desktop = get_option( 'raffle_search_widget_icon_color', '' );
+	$icon_mobile  = get_option( 'raffle_search_widget_icon_color_mobile', '' );
+
+	if ( $icon_desktop || $icon_mobile ) {
+		$icon_css = '';
+		$desktop_color = $icon_desktop ? esc_attr( $icon_desktop ) : '#333';
+		if ( $icon_desktop ) {
+			$icon_css .= '.raffle-search-widget__trigger{color:' . $desktop_color . ';}';
+		}
+		if ( $icon_mobile ) {
+			$icon_css .= '@media(max-width:990px){.raffle-search-widget__trigger{color:' . esc_attr( $icon_mobile ) . ';}}';
+		}
+		// Attach to both the block style handle and the shortcode style handle
+		// so the override prints right after whichever stylesheet is enqueued.
+		$widget_block_handle = function_exists( 'generate_block_asset_handle' )
+			? generate_block_asset_handle( 'raffle-search/widget', 'style' )
+			: '';
+		if ( $widget_block_handle && wp_style_is( $widget_block_handle, 'registered' ) ) {
+			wp_add_inline_style( $widget_block_handle, $icon_css );
+		}
+		if ( wp_style_is( 'raffle-search-widget-shortcode-style', 'registered' ) ) {
+			wp_add_inline_style( 'raffle-search-widget-shortcode-style', $icon_css );
+		}
 	}
 }
 add_action( 'wp_head', 'raffle_search_output_badge_color_styles' );

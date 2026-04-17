@@ -12,6 +12,7 @@
 	cursor: pointer;
 	border-radius: 50%;
 	transition: background 0.2s ease;
+	color: #333;
 }
 
 .raffle-search-widget__trigger:hover {
